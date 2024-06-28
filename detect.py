@@ -6,9 +6,10 @@ import numpy as np
 import os
 from tqdm import tqdm
 import json
+from config import AUDIO_DIR
 
-AUDIO_DIR = "/Users/ca7ax/Downloads/audio"
-FRAME_LENGTH = 8192
+# AUDIO_DIR = "/data/upload/6/"
+
 
 def max_smooth(a: np.ndarray, n: int) -> np.ndarray:
     """Smooths the input array by maximizing over an interval of length $n$.
@@ -127,8 +128,10 @@ def find_drop(audio_path: str, debug: bool=False):
     
     
 if __name__ == "__main__":
-    ret = find_drop("/Users/ca7ax/Downloads/audio/Nothing To Hide - PeTE _ Trevor Omoto _ Peter Pentsak.ogg", True)
+    ret = find_drop("/Users/ca7ax/Downloads/audio-100-test/10 Percent - No Signe.ogg", True)
     print(ret)
+    # ret = find_drop("/Users/ca7ax/Downloads/audio/Nothing To Hide - PeTE _ Trevor Omoto _ Peter Pentsak.ogg", True)
+    # print(ret)
     # find_drop("/Users/ca7ax/Downloads/Martin Garrix - Now That I've Found You (feat. John & Michel) [Official Video].mp3")
     # find_drop("/Users/ca7ax/Downloads/Martin Garrix & Third Party - Lions In The Wild [Official Video].mp3")
     drop_annotations = []
@@ -143,5 +146,5 @@ if __name__ == "__main__":
         
     print(f"Detection rate: {detected / len(drop_annotations)}")
         
-    with open('drop_annotations.json', 'w') as f:
+    with open('detected_drops.json', 'w') as f:
         json.dump(drop_annotations, f)
