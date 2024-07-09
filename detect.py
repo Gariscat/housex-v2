@@ -6,9 +6,7 @@ import numpy as np
 import os
 from tqdm import tqdm
 import json
-from config import AUDIO_DIR
-
-# AUDIO_DIR = "/data/upload/6/"
+from config import AUDIO_DIR, FRAME_LENGTH
 
 
 def max_smooth(a: np.ndarray, n: int) -> np.ndarray:
@@ -128,8 +126,6 @@ def find_drop(audio_path: str, debug: bool=False):
     
     
 if __name__ == "__main__":
-    ret = find_drop("/Users/ca7ax/Downloads/audio-100-test/10 Percent - No Signe.ogg", True)
-    print(ret)
     # ret = find_drop("/Users/ca7ax/Downloads/audio/Nothing To Hide - PeTE _ Trevor Omoto _ Peter Pentsak.ogg", True)
     # print(ret)
     # find_drop("/Users/ca7ax/Downloads/Martin Garrix - Now That I've Found You (feat. John & Michel) [Official Video].mp3")

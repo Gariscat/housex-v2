@@ -8,10 +8,11 @@ from detect import AUDIO_DIR
 import matplotlib.pyplot as plt
 from config import *
 from tqdm import tqdm
+from skimage.transform import resize
 
 
 def get_power_mel_spectrogram(y: np.ndarray, sr: int, eps: float=1e-5, debug: bool=False):
-    S = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=128)
+    S = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=224)
     log_S = librosa.power_to_db(S, ref=np.max)
     
     # print(np.min(log_S), np.max(log_S))
@@ -23,13 +24,42 @@ def get_power_mel_spectrogram(y: np.ndarray, sr: int, eps: float=1e-5, debug: bo
         plt.show()
         plt.close()
         
-    return -log_S / 80.0
+    # return -log_S / 80.0
+    return np.expand_dims(-log_S / 80.0, axis=0)
+
+def get_chromagrams(y: np.ndarray, sr: int, intervals: str='ji5', debug: bool=False):
+    chroma_cq = librosa.feature.chroma_cqt(y=y, sr=sr)
+    chroma_vq = librosa.feature.chroma_vqt(y=y, sr=sr, intervals=intervals)
+    
+    n = chroma_cq.shape[1]
+    
+    chroma_cq = resize(chroma_cq, (224, n))
+    chroma_vq = resize(chroma_vq, (224, n))
+    ret = np.stack([chroma_cq, chroma_vq])
+    return ret
+    """fig, ax = plt.subplots(nrows=2, sharex=True)
+    librosa.display.specshow(chroma_cq, y_axis='chroma', x_axis='time',
+                            ax=ax[0])
+    ax[0].set(ylabel='chroma_cqt')
+    ax[0].label_outer()
+    img = librosa.display.specshow(chroma_vq, y_axis='chroma_fjs', x_axis='time',
+                                ax=ax[1],
+                                intervals='pythagorean')
+    ax[1].set(ylabel='chroma_vqt')
+    fig.colorbar(img, ax=ax)
+    plt.show()
+    plt.close()
+    print(chroma_cq.shape, chroma_vq.shape)
+    print(chroma_cq.min(), chroma_cq.max())
+    print(chroma_vq.min(), chroma_vq.max())"""
 
 
 class HouseXDataset(Dataset):
     def __init__(self,
         drop_detection_path: str,
         genre_annotation_path: str,
+        # use_mel_spectrogram: bool=True,
+        use_chroma: bool=True,
     ):
         super(HouseXDataset, self).__init__()
         with open(drop_detection_path, "r") as f:
@@ -41,6 +71,7 @@ class HouseXDataset(Dataset):
             
         for track_info in tqdm(self.genre_annotations, desc="Loading tracks"):
             # assert len(track_info['annotations']) == 1
+            ### PROCESS GENRE LABELS
             track_name = os.path.basename(track_info['data']['audio'])
             track_absolute_path = os.path.join(AUDIO_DIR, track_name)
             
@@ -50,8 +81,13 @@ class HouseXDataset(Dataset):
                 genre_id = ALL_GENRES.index(genre_info['from_name'])
                 genre_soft_label[genre_id] = genre_info['value']["number"]
                 
-            assert genre_soft_label.sum() == 1.0
+            try:
+                assert genre_soft_label.sum() == 1.0
+            except:
+                print(track_name, genre_soft_label)
+            genre_soft_label = torch.from_numpy(genre_soft_label)
             
+            ### PROCESS AUDIO DATA
             y, sr = librosa.load(track_absolute_path, mono=True)
             
             drop_sections = None
@@ -78,10 +114,17 @@ class HouseXDataset(Dataset):
                     clip = y[clip_st:clip_ed]
                     
                     melspec = get_power_mel_spectrogram(clip, sr)
-                    self._data += [{
-                        "spec": torch.from_numpy(melspec),
-                        "label": torch.from_numpy(genre_soft_label)
-                    }]
+                    
+                    if not use_chroma:
+                        gram = torch.from_numpy(melspec).repeat(3, 1, 1)
+                    else:
+                        chroma = get_chromagrams(clip, sr)
+                        
+                        melspec = torch.from_numpy(melspec)
+                        chroma = torch.from_numpy(chroma)
+                        gram = torch.cat([melspec, chroma], dim=0)
+                    
+                    self._data.append((gram, genre_soft_label))
                     
         print("total clips:", len(self._data))
             
@@ -95,6 +138,11 @@ class HouseXDataset(Dataset):
     
 if __name__ == "__main__":
     drop_detection_path = "detected_drops.json"
-    genre_annotation_path = "/Users/ca7ax/housex-v2/project-7-at-2024-06-28-07-55-4149f847.json"
+    genre_annotation_path = "/Users/ca7ax/housex-v2/project-4-100-clean.json"
     dataset = HouseXDataset(drop_detection_path, genre_annotation_path)
-    
+    """
+    from torch.utils.data import DataLoader
+    dl = DataLoader(dataset, batch_size=4, shuffle=True)
+    b = next(iter(dl))
+    print(b[0].shape, b[1].shape)
+    """

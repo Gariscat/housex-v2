@@ -1,7 +1,7 @@
 NUM_SECONDS_PER_CLIP = 15
 NUM_CLIP_PER_DROPLOOP = 4
 
-AUDIO_DIR = "/Users/ca7ax/Library/Application Support/label-studio/media/upload/6/"
+AUDIO_DIR = "/Users/ca7ax/Library/Application Support/label-studio/media/upload/4/"
 FRAME_LENGTH = 8192
 
 ALL_GENRES = [
@@ -12,5 +12,5 @@ ALL_GENRES = [
     'Deep House',
     'Bigroom',
     'Future Rave',
-    'Slap House'
+    'Slap House',
 ]
