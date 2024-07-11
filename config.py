@@ -14,3 +14,5 @@ ALL_GENRES = [
     'Future Rave',
     'Slap House',
 ]
+
+HOP_FRAME = 16

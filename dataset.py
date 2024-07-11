@@ -123,6 +123,7 @@ class HouseXDataset(Dataset):
                         melspec = torch.from_numpy(melspec)
                         chroma = torch.from_numpy(chroma)
                         gram = torch.cat([melspec, chroma], dim=0)
+                        ### print(gram.shape)
                     
                     self._data.append((gram, genre_soft_label))
                     
