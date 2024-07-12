@@ -25,7 +25,7 @@ def get_power_mel_spectrogram(y: np.ndarray, sr: int, eps: float=1e-5, debug: bo
         plt.close()
         
     # return -log_S / 80.0
-    return np.expand_dims(-log_S / 80.0, axis=0)
+    return np.expand_dims(-log_S / 80.0, axis=0).astype(np.float32)
 
 def get_chromagrams(y: np.ndarray, sr: int, intervals: str='ji5', debug: bool=False):
     chroma_cq = librosa.feature.chroma_cqt(y=y, sr=sr)
@@ -36,7 +36,7 @@ def get_chromagrams(y: np.ndarray, sr: int, intervals: str='ji5', debug: bool=Fa
     chroma_cq = resize(chroma_cq, (224, n))
     chroma_vq = resize(chroma_vq, (224, n))
     ret = np.stack([chroma_cq, chroma_vq])
-    return ret
+    return ret.astype(np.float32)
     """fig, ax = plt.subplots(nrows=2, sharex=True)
     librosa.display.specshow(chroma_cq, y_axis='chroma', x_axis='time',
                             ax=ax[0])
@@ -85,7 +85,7 @@ class HouseXDataset(Dataset):
                 assert genre_soft_label.sum() == 1.0
             except:
                 print(track_name, genre_soft_label)
-            genre_soft_label = torch.from_numpy(genre_soft_label)
+            genre_soft_label = torch.from_numpy(genre_soft_label).float()
             
             ### PROCESS AUDIO DATA
             y, sr = librosa.load(track_absolute_path, mono=True)
@@ -141,6 +141,7 @@ if __name__ == "__main__":
     drop_detection_path = "detected_drops.json"
     genre_annotation_path = "/Users/ca7ax/housex-v2/project-4-100-clean.json"
     dataset = HouseXDataset(drop_detection_path, genre_annotation_path)
+    torch.save(dataset, "proto_dataset.pth")
     """
     from torch.utils.data import DataLoader
     dl = DataLoader(dataset, batch_size=4, shuffle=True)
