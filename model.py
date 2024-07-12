@@ -6,7 +6,7 @@ from torchvision.models import \
     resnet152, ResNet152_Weights, \
     densenet201, DenseNet201_Weights, \
     resnext101_32x8d, ResNeXt101_32X8D_Weights
-from torch import nn
+from torch import nn, optim
 import torch.nn.functional as F
 from torch.nn import TransformerEncoder, TransformerEncoderLayer
 from config import ALL_GENRES, HOP_FRAME
@@ -59,6 +59,24 @@ class HouseXModel(L.LightningModule):
         out = self.fc(out)
         
         return out
+    
+    def training_step(self, batch, batch_idx):
+        x, y = batch
+        y_hat = self(x)
+        loss = nn.CrossEntropyLoss()(y_hat, y)
+        self.log("train_loss", loss)
+        return loss
+    
+    def validation_step(self, batch, batch_idx):
+        x, y = batch
+        y_hat = self(x)
+        loss = nn.CrossEntropyLoss()(y_hat, y)
+        self.log("val_loss", loss)
+        return loss
+    
+    def configure_optimizers(self):
+        optimizer = optim.Adam(self.parameters(), lr=1e-4)
+        return optimizer
         
 if __name__ == "__main__":
     for extractor_name in ['vit_b_16', 'vgg11_bn', 'resnet152', 'densenet201', 'resnext101_32x8d']:
