@@ -4,6 +4,9 @@ from model import HouseXModel
 from torch.utils.data import DataLoader
 import torch
 import lightning as L
+from lightning.pytorch.loggers import WandbLogger
+
+wandb_logger = WandbLogger(project="housex-v2")
 
 if __name__ == '__main__':
     drop_detection_path = "detected_drops.json"
@@ -11,6 +14,6 @@ if __name__ == '__main__':
     # dataset = HouseXDataset(drop_detection_path, genre_annotation_path)
     dataset = torch.load("proto_dataset.pth")
     data_loader = DataLoader(dataset, batch_size=2, shuffle=True, generator=torch.Generator().manual_seed(42))
-    model = HouseXModel(extractor_name='vit_b_16')
-    trainer = L.Trainer(limit_train_batches=100, max_epochs=1)
+    model = HouseXModel(extractor_name='densenet201')
+    trainer = L.Trainer(limit_train_batches=100, max_epochs=1, logger=wandb_logger)
     trainer.fit(model=model, train_dataloaders=data_loader)

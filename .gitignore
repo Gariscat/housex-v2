@@ -163,3 +163,5 @@ cython_debug/
 
 *.json
 *.pth
+lightning_logs/
+wandb/

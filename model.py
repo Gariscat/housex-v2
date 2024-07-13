@@ -12,7 +12,7 @@ from torch.nn import TransformerEncoder, TransformerEncoderLayer
 from config import ALL_GENRES, HOP_FRAME
 
 class HouseXModel(L.LightningModule):
-    def __init__(self, extractor_name = 'vit_b_16'):
+    def __init__(self, extractor_name='vit_b_16'):
         super(HouseXModel, self).__init__()
         
         if extractor_name == 'vit_b_16':
@@ -54,7 +54,7 @@ class HouseXModel(L.LightningModule):
             features.append(y)
             
         embedding = torch.stack(features) # (n, b, d)
-        out = self.encoder(embedding)
+        out = self.encoder(embedding)[0] # (0, d)
         out = nn.ReLU()(out)
         out = self.fc(out)
         
