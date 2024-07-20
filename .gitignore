@@ -164,3 +164,6 @@ cython_debug/
 *.pth
 lightning_logs/
 wandb/
+*data/*
+annotations/*
+misc/*

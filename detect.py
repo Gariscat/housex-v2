@@ -7,7 +7,7 @@ import os
 from tqdm import tqdm
 import json
 from config import AUDIO_DIR, FRAME_LENGTH
-
+import soundfile as sf
 
 def max_smooth(a: np.ndarray, n: int) -> np.ndarray:
     """Smooths the input array by maximizing over an interval of length $n$.
@@ -48,7 +48,7 @@ def find_drop(audio_path: str, debug: bool=False):
     Returns:
         sections (List[str]): pairs of (st, ed) of drops
     """
-    y, sr = librosa.load(audio_path)
+    y, sr = sf.read(audio_path)
     ### y = y[15*sr:]  # truncate the first 15 seconds
     loudness = librosa.feature.rms(y=y, frame_length=FRAME_LENGTH).flatten()
     # Convert loudness from rms to dB
@@ -142,5 +142,5 @@ if __name__ == "__main__":
         
     print(f"Detection rate: {detected / len(drop_annotations)}")
         
-    with open('detected_drops.json', 'w') as f:
+    with open('annotations/detected_drops.json', 'w') as f:
         json.dump(drop_annotations, f)

@@ -138,7 +138,7 @@ class HouseXDataset(Dataset):
     
     
 if __name__ == "__main__":
-    drop_detection_path = "detected_drops.json"
+    drop_detection_path = "annotations/detected_drops.json"
     genre_annotation_path = "/Users/ca7ax/housex-v2/project-4-100-clean.json"
     dataset = HouseXDataset(drop_detection_path, genre_annotation_path)
     torch.save(dataset, "proto_dataset.pth")
