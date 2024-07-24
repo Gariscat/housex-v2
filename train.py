@@ -16,8 +16,14 @@ if __name__ == '__main__':
     torch.save(dataset, '/root/partition-1-5-dataset.pth')"""
     dataset = torch.load("/root/partition-1-5-dataset.pth")
     train_set, val_set = random_split(dataset, [0.8, 0.2], generator=torch_rng)
+    
+    class_cnt = sum([y for _, y in train_set])
+    lw = 1 / class_cnt
+    lw /= lw.sum()
+    lw = torch.tensor(lw, dtype=torch.float32)
+    
     train_loader = DataLoader(train_set, batch_size=4, shuffle=True, generator=torch_rng)
     val_loader = DataLoader(val_set, batch_size=4, shuffle=False, generator=torch_rng)
-    model = HouseXModel(extractor_name='densenet201')
+    model = HouseXModel(extractor_name='densenet201', loss_weight=lw)
     trainer = L.Trainer(max_epochs=10, logger=wandb_logger)
     trainer.fit(model=model, train_dataloaders=train_loader, val_dataloaders=val_loader)

@@ -12,7 +12,7 @@ from torch.nn import TransformerEncoder, TransformerEncoderLayer
 from config import ALL_GENRES, HOP_FRAME
 
 class HouseXModel(L.LightningModule):
-    def __init__(self, extractor_name='vit_b_16'):
+    def __init__(self, extractor_name: str='vit_b_16', loss_weight: torch.Tensor=None):
         super(HouseXModel, self).__init__()
         
         if extractor_name == 'vit_b_16':
@@ -39,6 +39,7 @@ class HouseXModel(L.LightningModule):
             num_layers=1
         )
         self.fc = nn.Linear(768, len(ALL_GENRES))
+        self.loss_weight = loss_weight
         
     def forward(self, x):
         b, c, h, w = x.shape
@@ -63,14 +64,14 @@ class HouseXModel(L.LightningModule):
     def training_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        loss = nn.CrossEntropyLoss()(y_hat, y)
+        loss = nn.CrossEntropyLoss(weight=self.loss_weight)(y_hat, y)
         self.log("train_loss", loss)
         return loss
     
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        loss = nn.CrossEntropyLoss()(y_hat, y)
+        loss = nn.CrossEntropyLoss(weight=self.loss_weight)(y_hat, y)
         self.log("val_loss", loss)
         return loss
     
