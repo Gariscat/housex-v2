@@ -64,6 +64,8 @@ class HouseXModel(L.LightningModule):
     def training_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
+        if self.loss_weight is not None:
+            self.loss_weight = self.loss_weight.to(x.device)
         loss = nn.CrossEntropyLoss(weight=self.loss_weight)(y_hat, y)
         self.log("train_loss", loss)
         return loss
@@ -71,6 +73,8 @@ class HouseXModel(L.LightningModule):
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
+        if self.loss_weight is not None:
+            self.loss_weight = self.loss_weight.to(x.device)
         loss = nn.CrossEntropyLoss(weight=self.loss_weight)(y_hat, y)
         self.log("val_loss", loss)
         return loss
