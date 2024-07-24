@@ -36,7 +36,7 @@ class HouseXModel(L.LightningModule):
         )
         self.encoder = TransformerEncoder(
             TransformerEncoderLayer(d_model=768, nhead=12),
-            num_layers=6
+            num_layers=1
         )
         self.fc = nn.Linear(768, len(ALL_GENRES))
         

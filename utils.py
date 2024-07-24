@@ -6,6 +6,7 @@ import librosa
 import numpy as np
 from argparse import ArgumentParser
 import json
+import soundfile as sf
 
 class AudioPlayer:
     """
@@ -216,7 +217,36 @@ def avg_smooth(a: np.ndarray, n: int) -> np.ndarray:
         np.ndarray: The smoothed array.
     """
     return np.convolve(a, np.ones(n), 'same') / n
+
+
+def read_audio(audio_path: str, chunk_size: int=8192):
+    y = []
     
+    with sf.SoundFile(audio_path, 'r') as f:
+        samplerate = f.samplerate
+        channels = f.channels
+        """print(f'Sample rate: {samplerate}')
+        print(f'Channels: {channels}')"""
+
+        while True:
+            # Read a chunk of data
+            chunk = f.read(chunk_size)
+            if len(chunk) == 0:
+                break
+            if channels == 2:
+                chunk = chunk.mean(axis=-1)
+            y += chunk.tolist()
+            
+    return np.array(y), samplerate
+
+
+def read_audio_st_ed(audio_path: str, st: float, ed: float):
+    sr = librosa.get_samplerate(audio_path)
+    y, _ = sf.read(audio_path, start=int(st*sr), stop=int(ed*sr))
+    if len(y.shape) == 2:
+        y = y.mean(axis=1)
+    return y, sr
+
 
 def find_drop(audio_path: str, debug: bool=False, left_trunc_sec: float=15, write_to_tmp: bool=True):
     """Detects the drop in an EDM track.
@@ -228,7 +258,8 @@ def find_drop(audio_path: str, debug: bool=False, left_trunc_sec: float=15, writ
         sections (List[str]): pairs of (st, ed) of drops
     """
     y, sr = librosa.load(audio_path)
-    y = y[int(left_trunc_sec*sr):]  # truncate the first 7.5 seconds (speed up later process)
+    # y, sr = read_audio(audio_path)
+    y = y[int(left_trunc_sec*sr):]  # truncate the first x seconds (speed up later process)
     loudness = librosa.feature.rms(y=y, frame_length=FRAME_LENGTH).flatten()
     # Convert loudness from rms to dB
     loudness = librosa.amplitude_to_db(loudness, ref=np.max)
@@ -241,7 +272,7 @@ def find_drop(audio_path: str, debug: bool=False, left_trunc_sec: float=15, writ
         plt.xlabel('Time (s)')
         plt.ylabel('Loudness')
         plt.title('Loudness Curve')
-        plt.show()
+        plt.savefig(f'/root/{os.path.basename(audio_path)}_chunk.jpg')
         plt.close()
     """"""
     loudness = max_smooth(loudness, 128)

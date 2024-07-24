@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from config import *
 from tqdm import tqdm
 from skimage.transform import resize
-
+from utils import read_audio_st_ed
 
 def get_power_mel_spectrogram(y: np.ndarray, sr: int, eps: float=1e-5, debug: bool=False):
     S = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=224)
@@ -89,7 +89,8 @@ class HouseXDataset(Dataset):
                 genre_soft_label /= genre_soft_label.sum()
             
             ### PROCESS AUDIO DATA
-            y, sr = librosa.load(track_absolute_path, mono=True)
+            ### y, sr = librosa.load(track_absolute_path, mono=True)
+            ### y, sr = read_audio(track_absolute_path)
             
             drop_sections = None
             for drop in self.detected_drops:
@@ -102,6 +103,7 @@ class HouseXDataset(Dataset):
             
             ### print("track:", track_name)
             for drop_st, drop_ed in drop_sections:
+                y_cur, sr = read_audio_st_ed(track_absolute_path, drop_st, drop_ed)
                 drop_st_sample = librosa.time_to_samples(drop_st, sr=sr)
                 drop_ed_sample = librosa.time_to_samples(drop_ed, sr=sr)
                 num_sample_per_clip = int(NUM_SECONDS_PER_CLIP * sr)
@@ -110,9 +112,9 @@ class HouseXDataset(Dataset):
                 ### print("  clip_length:", num_sample_per_clip)
                 
                 for _ in range(NUM_CLIP_PER_DROPLOOP):
-                    clip_st = np.random.randint(drop_st_sample, drop_ed_sample - num_sample_per_clip)
+                    clip_st = np.random.randint(0, drop_ed_sample - drop_st_sample - num_sample_per_clip)
                     clip_ed = clip_st + num_sample_per_clip
-                    clip = y[clip_st:clip_ed]
+                    clip = y_cur[clip_st:clip_ed]
                     
                     melspec = get_power_mel_spectrogram(clip, sr)
                     
