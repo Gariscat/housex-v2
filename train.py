@@ -9,11 +9,12 @@ from lightning.pytorch.loggers import WandbLogger
 wandb_logger = WandbLogger(project="housex-v2")
 
 if __name__ == '__main__':
-    drop_detection_path = "detected_drops.json"
-    genre_annotation_path = "/Users/ca7ax/housex-v2/project-4-100-clean.json"
-    # dataset = HouseXDataset(drop_detection_path, genre_annotation_path)
-    dataset = torch.load("proto_dataset.pth")
+    drop_detection_path = '/root/housex-v2/annotations/detected_drops.json'
+    genre_annotation_path = '/root/housex-v2/annotations/partition-1-5.json'
+    dataset = HouseXDataset(drop_detection_path, genre_annotation_path)
+    torch.save('~/partition-1-5-dataset.pth')
+    # dataset = torch.load("proto_dataset.pth")
     data_loader = DataLoader(dataset, batch_size=2, shuffle=True, generator=torch.Generator().manual_seed(42))
     model = HouseXModel(extractor_name='densenet201')
-    trainer = L.Trainer(limit_train_batches=100, max_epochs=1, logger=wandb_logger)
+    trainer = L.Trainer(max_epochs=10, logger=wandb_logger)
     trainer.fit(model=model, train_dataloaders=data_loader)

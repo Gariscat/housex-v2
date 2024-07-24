@@ -80,33 +80,34 @@ class HouseXDataset(Dataset):
             for genre_info in annotation_results:
                 genre_id = ALL_GENRES.index(genre_info['from_name'])
                 genre_soft_label[genre_id] = genre_info['value']["number"]
-                
+            
+            genre_soft_label = torch.from_numpy(genre_soft_label).float()
             try:
-                assert genre_soft_label.sum() == 1.0
+                assert genre_soft_label.sum().item() == 1.0
             except:
                 print(track_name, genre_soft_label)
-            genre_soft_label = torch.from_numpy(genre_soft_label).float()
+                genre_soft_label /= genre_soft_label.sum()
             
             ### PROCESS AUDIO DATA
             y, sr = librosa.load(track_absolute_path, mono=True)
             
             drop_sections = None
             for drop in self.detected_drops:
-                if drop["audio_path"] == track_absolute_path:
+                if os.path.basename(drop["audio_path"]) == os.path.basename(track_absolute_path):
                     drop_sections = drop["drop_sections"]
                     break
                 
             if drop_sections is None:
                 continue
             
-            # print("track:", track_name)
+            ### print("track:", track_name)
             for drop_st, drop_ed in drop_sections:
                 drop_st_sample = librosa.time_to_samples(drop_st, sr=sr)
                 drop_ed_sample = librosa.time_to_samples(drop_ed, sr=sr)
                 num_sample_per_clip = int(NUM_SECONDS_PER_CLIP * sr)
                 
-                # print("  drop_loop_length:", drop_ed_sample - drop_st_sample)
-                # print("  clip_length:", num_sample_per_clip)
+                ### print("  drop_loop_length:", drop_ed_sample - drop_st_sample)
+                ### print("  clip_length:", num_sample_per_clip)
                 
                 for _ in range(NUM_CLIP_PER_DROPLOOP):
                     clip_st = np.random.randint(drop_st_sample, drop_ed_sample - num_sample_per_clip)
@@ -138,9 +139,7 @@ class HouseXDataset(Dataset):
     
     
 if __name__ == "__main__":
-    drop_detection_path = "detected_drops.json"
-    genre_annotation_path = "/Users/ca7ax/housex-v2/project-4-100-clean.json"
-    dataset = HouseXDataset(drop_detection_path, genre_annotation_path)
+    dataset = HouseXDataset(DROP_DETECTION_PATH, GENRE_LABEL_PATH)
     torch.save(dataset, "proto_dataset.pth")
     """
     from torch.utils.data import DataLoader
