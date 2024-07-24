@@ -18,6 +18,8 @@ if __name__ == '__main__':
     train_set, val_set = random_split(dataset, [0.8, 0.2], generator=torch_rng)
     
     class_cnt = sum([y for _, y in train_set])
+    for genre, score in zip(ALL_GENRES, class_cnt.numpy().tolist()):
+        print(genre, score)
     lw = 1 / class_cnt
     lw /= lw.sum()
     lw = torch.tensor(lw, dtype=torch.float32)
