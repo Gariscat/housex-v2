@@ -10,20 +10,26 @@ from torch import nn, optim
 import torch.nn.functional as F
 from torch.nn import TransformerEncoder, TransformerEncoderLayer
 from config import ALL_GENRES, HOP_FRAME
+from easydict import EasyDict as edict
 
 class HouseXModel(L.LightningModule):
-    def __init__(self, extractor_name: str='vit_b_16', loss_weight: torch.Tensor=None):
+    def __init__(self,
+        model_config: edict,
+        extractor_name: str='vit_b_16',
+        loss_weight: torch.Tensor=None
+    ):
         super(HouseXModel, self).__init__()
         
-        if extractor_name == 'vit_b_16':
+        self.config = model_config
+        if model_config.extractor_name == 'vit_b_16':
             backbone = vit_b_16(weights=ViT_B_16_Weights.DEFAULT)
-        elif extractor_name == 'vgg11_bn':
+        elif model_config.extractor_name == 'vgg11_bn':
             backbone = vgg11_bn(weights=VGG11_BN_Weights.DEFAULT)
-        elif extractor_name == 'resnet152':
+        elif model_config.extractor_name == 'resnet152':
             backbone = resnet152(weights=ResNet152_Weights.DEFAULT)
-        elif extractor_name == 'densenet201':
+        elif model_config.extractor_name == 'densenet201':
             backbone = densenet201(weights=DenseNet201_Weights.DEFAULT)
-        elif extractor_name == 'resnext101_32x8d':
+        elif model_config.extractor_name == 'resnext101_32x8d':
             backbone = resnext101_32x8d(weights=ResNeXt101_32X8D_Weights.DEFAULT)
         else:
             raise NotImplementedError(f"Extractor {extractor_name} is not supported.")
@@ -36,10 +42,9 @@ class HouseXModel(L.LightningModule):
         )
         self.encoder = TransformerEncoder(
             TransformerEncoderLayer(d_model=768, nhead=12),
-            num_layers=1
+            num_layers=model_config.transformer_num_layers
         )
         self.fc = nn.Linear(768, len(ALL_GENRES))
-        self.loss_weight = loss_weight
         
     def forward(self, x):
         b, c, h, w = x.shape
@@ -60,22 +65,22 @@ class HouseXModel(L.LightningModule):
         out = self.fc(out)
         
         return out
-    
+        
     def training_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        if self.loss_weight is not None:
-            self.loss_weight = self.loss_weight.to(x.device)
-        loss = nn.CrossEntropyLoss(weight=self.loss_weight)(y_hat, y)
+        if self.model_config.loss_weight is not None:
+            self.model_config.loss_weight = self.model_config.loss_weight.to(x.device)
+        loss = nn.CrossEntropyLoss(weight=self.model_config.loss_weight)(y_hat, y)
         self.log("train_loss", loss)
         return loss
     
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        if self.loss_weight is not None:
-            self.loss_weight = self.loss_weight.to(x.device)
-        loss = nn.CrossEntropyLoss(weight=self.loss_weight)(y_hat, y)
+        if self.model_config.loss_weight is not None:
+            self.model_config.loss_weight = self.model_config.loss_weight.to(x.device)
+        loss = nn.CrossEntropyLoss(weight=self.model_config.loss_weight)(y_hat, y)
         self.log("val_loss", loss)
         return loss
     

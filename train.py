@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader, random_split
 import torch
 import lightning as L
 from lightning.pytorch.loggers import WandbLogger
+from easydict import EasyDict as edict
 
 torch_rng = torch.Generator().manual_seed(42)
 wandb_logger = WandbLogger(project="housex-v2")
@@ -27,8 +28,13 @@ if __name__ == '__main__':
     lw /= lw.sum()
     lw = torch.tensor(lw, dtype=torch.float32)
     
+    model_config = edict({
+        'extractor_name': 'densenet201',
+        'transformer_num_layers': 1,
+        'loss_weight': lw
+    })
     train_loader = DataLoader(train_set, batch_size=4, shuffle=True, generator=torch_rng)
     val_loader = DataLoader(val_set, batch_size=4, shuffle=False, generator=torch_rng)
-    model = HouseXModel(extractor_name='densenet201', loss_weight=lw)
+    model = HouseXModel(model_config)
     trainer = L.Trainer(max_epochs=20, logger=wandb_logger)
     trainer.fit(model=model, train_dataloaders=train_loader, val_dataloaders=val_loader)
