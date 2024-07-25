@@ -12,9 +12,11 @@ wandb_logger = WandbLogger(project="housex-v2")
 if __name__ == '__main__':
     drop_detection_path = '/root/housex-v2/annotations/detected_drops.json'
     genre_annotation_path = '/root/housex-v2/annotations/partition-1-5.json'
-    """dataset = HouseXDataset(drop_detection_path, genre_annotation_path)
-    torch.save(dataset, '/root/partition-1-5-dataset.pth')"""
+    dataset = HouseXDataset(drop_detection_path, genre_annotation_path)
+    torch.save(dataset, '/root/partition-1-5-dataset.pth')
+    """
     dataset = torch.load("/root/partition-1-5-dataset.pth")
+    """
     train_set, val_set = random_split(dataset, [0.8, 0.2], generator=torch_rng)
     
     class_cnt = sum([y for _, y in train_set])
