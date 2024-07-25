@@ -80,7 +80,7 @@ class HouseXModel(L.LightningModule):
         return loss
     
     def configure_optimizers(self):
-        optimizer = optim.Adam(self.parameters(), lr=1e-4)
+        optimizer = optim.Adam(self.parameters(), lr=2e-4)
         return optimizer
         
 if __name__ == "__main__":
