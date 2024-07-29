@@ -1,9 +1,9 @@
 NUM_SECONDS_PER_CLIP = 7.5
 NUM_CLIP_PER_DROPLOOP = 4
 
-AUDIO_DIR = "/root/10/"
-DROP_DETECTION_PATH = "annotations/detected_drops.json"
-GENRE_LABEL_PATH = "annotations/partition-1-5.json"
+AUDIO_DIR = "/root/part-1-5"
+DROP_DETECTION_PATH = "/root/part-1-5/detected_drops.json"
+GENRE_LABEL_PATH = "/root/part-1-5/partition-1-5-refined.json"
 FRAME_LENGTH = 8192
 
 ALL_GENRES = [

@@ -15,24 +15,22 @@ from easydict import EasyDict as edict
 class HouseXModel(L.LightningModule):
     def __init__(self,
         model_config: edict,
-        extractor_name: str='vit_b_16',
-        loss_weight: torch.Tensor=None
     ):
         super(HouseXModel, self).__init__()
         
         self.config = model_config
-        if model_config.extractor_name == 'vit_b_16':
+        if self.config.extractor_name == 'vit_b_16':
             backbone = vit_b_16(weights=ViT_B_16_Weights.DEFAULT)
-        elif model_config.extractor_name == 'vgg11_bn':
+        elif self.config.extractor_name == 'vgg11_bn':
             backbone = vgg11_bn(weights=VGG11_BN_Weights.DEFAULT)
-        elif model_config.extractor_name == 'resnet152':
+        elif self.config.extractor_name == 'resnet152':
             backbone = resnet152(weights=ResNet152_Weights.DEFAULT)
-        elif model_config.extractor_name == 'densenet201':
+        elif self.config.extractor_name == 'densenet201':
             backbone = densenet201(weights=DenseNet201_Weights.DEFAULT)
-        elif model_config.extractor_name == 'resnext101_32x8d':
+        elif self.config.extractor_name == 'resnext101_32x8d':
             backbone = resnext101_32x8d(weights=ResNeXt101_32X8D_Weights.DEFAULT)
         else:
-            raise NotImplementedError(f"Extractor {extractor_name} is not supported.")
+            raise NotImplementedError(f"Extractor {self.config.extractor_name} is not supported.")
         
         self.extractor = nn.Sequential(
             backbone,
@@ -69,24 +67,28 @@ class HouseXModel(L.LightningModule):
     def training_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        if self.model_config.loss_weight is not None:
-            self.model_config.loss_weight = self.model_config.loss_weight.to(x.device)
-        loss = nn.CrossEntropyLoss(weight=self.model_config.loss_weight)(y_hat, y)
+        if self.config.loss_weight is not None:
+            self.config.loss_weight = self.config.loss_weight.to(x.device)
+        loss = nn.CrossEntropyLoss(weight=self.config.loss_weight)(y_hat, y)
         self.log("train_loss", loss)
         return loss
     
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        if self.model_config.loss_weight is not None:
-            self.model_config.loss_weight = self.model_config.loss_weight.to(x.device)
-        loss = nn.CrossEntropyLoss(weight=self.model_config.loss_weight)(y_hat, y)
+        if self.config.loss_weight is not None:
+            self.config.loss_weight = self.config.loss_weight.to(x.device)
+        loss = nn.CrossEntropyLoss(weight=self.config.loss_weight)(y_hat, y)
         self.log("val_loss", loss)
         return loss
     
     def configure_optimizers(self):
-        optimizer = optim.Adam(self.parameters(), lr=2e-4)
-        return optimizer
+        optimizer = optim.Adam(self.parameters(), lr=self.config.learning_rate)
+        # sch = optim.lr_scheduler.ReduceLROnPlateau(optimizer=optimizer, mode='min', patience=1)
+        sch = optim.lr_scheduler.StepLR(optimizer, step_size=256, gamma=0.9)
+        return [optimizer,], [sch,]
+    
+    
         
 if __name__ == "__main__":
     for extractor_name in ['vit_b_16', 'vgg11_bn', 'resnet152', 'densenet201', 'resnext101_32x8d']:

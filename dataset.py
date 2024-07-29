@@ -4,7 +4,7 @@ from torch.utils.data import Dataset
 import numpy as np
 import librosa
 import json
-from detect import AUDIO_DIR
+# from detect import AUDIO_DIR
 import matplotlib.pyplot as plt
 from config import *
 from tqdm import tqdm
@@ -56,6 +56,7 @@ def get_chromagrams(y: np.ndarray, sr: int, intervals: str='ji5', debug: bool=Fa
 
 class HouseXDataset(Dataset):
     def __init__(self,
+        audio_dir: str,
         drop_detection_path: str,
         genre_annotation_path: str,
         # use_mel_spectrogram: bool=True,
@@ -73,7 +74,7 @@ class HouseXDataset(Dataset):
             # assert len(track_info['annotations']) == 1
             ### PROCESS GENRE LABELS
             track_name = os.path.basename(track_info['data']['audio'])
-            track_absolute_path = os.path.join(AUDIO_DIR, track_name)
+            track_absolute_path = os.path.join(audio_dir, track_name)
             
             genre_soft_label = np.zeros(len(ALL_GENRES))
             annotation_results = track_info['annotations'][0]['result']
