@@ -10,6 +10,7 @@ from config import *
 from tqdm import tqdm
 from skimage.transform import resize
 from utils import read_audio_st_ed
+from typing import List, Tuple
 
 def get_power_mel_spectrogram(y: np.ndarray, sr: int, eps: float=1e-5, debug: bool=False):
     S = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=224)
@@ -67,56 +68,89 @@ def get_gram(clip: np.ndarray, sr: int, use_chroma: bool=False):
     
     return gram
 
-
-class HouseXDataset(Dataset):
-    def __init__(self,
-        audio_dir: str,
-        # use_mel_spectrogram: bool=True,
-        use_chroma: bool=True,
-    ):
-        super(HouseXDataset, self).__init__()
-        drop_detection_path = [x for x in os.listdir(audio_dir) if x.endswith('.json') and 'detect' in x][0]
-        genre_annotation_path = [x for x in os.listdir(audio_dir) if x.endswith('.json') and 'anno' in x][0]
-        with open(drop_detection_path, "r") as f:
-            self.detected_drops = json.load(f)
-        with open(genre_annotation_path, "r") as f:
-            self.genre_annotations = json.load(f)
-            
-        self._data = []
-            
-        for track_info in tqdm(self.genre_annotations, desc="Loading tracks"):
-            # assert len(track_info['annotations']) == 1
+def process_audio_dir(audio_dir: str) -> List:
+    drop_detection_path = [x for x in os.listdir(audio_dir) if x.endswith('.json') and 'detect' in x][0]
+    genre_annotation_path = [x for x in os.listdir(audio_dir) if x.endswith('.json') and 'anno' in x][0]
+    with open(drop_detection_path, "r") as f:
+        detected_drops = json.load(f)
+    with open(genre_annotation_path, "r") as f:
+        genre_annotations = json.load(f)
+        
+    ret = [] # (path, soft_label, drop_sections)
+    
+    for track_info in tqdm(genre_annotations, desc="Reading tracks"):
+        # assert len(track_info['annotations']) == 1
             ### PROCESS GENRE LABELS
-            track_name = os.path.basename(track_info['data']['audio'])
-            track_absolute_path = os.path.join(audio_dir, track_name)
+        track_name = os.path.basename(track_info['data']['audio'])
+        track_absolute_path = os.path.join(audio_dir, track_name)
             
-            genre_soft_label = np.zeros(len(ALL_GENRES))
-            annotation_results = track_info['annotations'][0]['result']
-            for genre_info in annotation_results:
-                genre_id = ALL_GENRES.index(genre_info['from_name'])
-                genre_soft_label[genre_id] = genre_info['value']["number"]
+        genre_soft_label = np.zeros(len(ALL_GENRES))
+        annotation_results = track_info['annotations'][0]['result']
+        for genre_info in annotation_results:
+            genre_id = ALL_GENRES.index(genre_info['from_name'])
+            genre_soft_label[genre_id] = genre_info['value']["number"]
             
-            genre_soft_label = torch.from_numpy(genre_soft_label).float()
-            try:
-                assert genre_soft_label.sum().item() == 1.0
-            except:
-                print(track_name, genre_soft_label)
-                genre_soft_label /= genre_soft_label.sum()
+        # genre_soft_label = torch.from_numpy(genre_soft_label).float()
+        try:
+            assert genre_soft_label.sum().item() == 1.0
+        except:
+            print(track_name, genre_soft_label)
+            genre_soft_label /= genre_soft_label.sum()
             
             ### PROCESS AUDIO DATA
             ### y, sr = librosa.load(track_absolute_path, mono=True)
             ### y, sr = read_audio(track_absolute_path)
             
-            drop_sections = None
-            for drop in self.detected_drops:
-                if os.path.basename(drop["audio_path"]) == os.path.basename(track_absolute_path):
-                    drop_sections = drop["drop_sections"]
-                    break
+        drop_sections = None
+        for drop in detected_drops:
+            if os.path.basename(drop["audio_path"]) == os.path.basename(track_absolute_path):
+                drop_sections = drop["drop_sections"]
+                break
                 
-            if drop_sections is None:
-                continue
+        if drop_sections is None:
+            continue
+        
+        ret.append((track_absolute_path, genre_soft_label.tolist(), drop_sections))
+        
+    return ret
+
+def create_splits(audio_dirs: List[str], split_ratio: List[float], rng_seed: int=42) -> List[List]:
+    data_list = []
+    for audio_dir in audio_dirs:
+        data_list += process_audio_dir(audio_dir)
+        
+    np.random.seed(rng_seed)
+    data_list = np.random.permutation(data_list)
+    
+    assert sum(split_ratio) == 1.0
+    
+    boundaries = (np.cumsum([0]+split_ratio) * len(data_list)).astype(int)
+    
+    splits = []
+    for i in range(boundaries.shape[0] - 1):
+        cur_split = data_list[boundaries[i]:boundaries[i+1]]
+        splits.append(cur_split)
+        
+    return splits
+        
+class HouseXDataset(Dataset):
+    def __init__(self,
+        data_list: List[Tuple],
+        # use_mel_spectrogram: bool=True,
+        use_chroma: bool=True,
+    ):
+        super(HouseXDataset, self).__init__()
+        
+        self.track_names = []
+        self._data = []
+        
+        for track_absolute_path, genre_soft_label, drop_sections in tqdm(data_list, desc="Creating dataset"):
+            # assert len(track_info['annotations']) == 1
             
-            ### print("track:", track_name)
+            self.track_names.append(os.path.basename(track_absolute_path))
+            
+            genre_soft_label = torch.from_numpy(genre_soft_label).float()
+            
             for drop_st, drop_ed in drop_sections:
                 y_cur, sr = read_audio_st_ed(track_absolute_path, drop_st, drop_ed)
                 drop_st_sample = librosa.time_to_samples(drop_st, sr=sr)
@@ -146,11 +180,4 @@ class HouseXDataset(Dataset):
     
     
 if __name__ == "__main__":
-    dataset = HouseXDataset(DROP_DETECTION_PATH, GENRE_LABEL_PATH)
-    torch.save(dataset, "proto_dataset.pth")
-    """
-    from torch.utils.data import DataLoader
-    dl = DataLoader(dataset, batch_size=4, shuffle=True)
-    b = next(iter(dl))
-    print(b[0].shape, b[1].shape)
-    """
+    pass

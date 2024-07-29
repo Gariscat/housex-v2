@@ -1,5 +1,5 @@
 from config import *
-from dataset import HouseXDataset
+from dataset import HouseXDataset, create_splits
 from model import HouseXModel
 from torch.utils.data import DataLoader, random_split
 import torch
@@ -24,8 +24,19 @@ if __name__ == '__main__':
     )
     torch.save(val_set, '/root/partition-6-10-dataset.pth')
     """
-    train_set = torch.load("/root/partition-1-5-dataset.pth")
-    val_set = torch.load("/root/partition-6-10-dataset.pth")
+    """train_set = torch.load("/root/partition-1-5-dataset.pth")
+    val_set = torch.load("/root/partition-6-10-dataset.pth")"""
+    
+    train_test_ratio = [0.8, 0.2]
+    train_split, test_split = create_splits(
+        audio_dirs=['/root/part-1-5/', '/root/part-6-10/'],
+        split_ratio=train_test_ratio,
+        rng_seed=42,
+    )
+    train_set = HouseXDataset(data_list=train_split)
+    val_set = HouseXDataset(data_list=test_split)
+    torch.save(train_set, '/root/partition-1-5-dataset.pth')
+    torch.save(val_set, '/root/partition-6-10-dataset.pth')
     
     ### train_set, val_set = random_split(dataset, [0.8, 0.2], generator=torch_rng)
     
