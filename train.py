@@ -35,8 +35,8 @@ if __name__ == '__main__':
     )
     train_set = HouseXDataset(data_list=train_split)
     val_set = HouseXDataset(data_list=test_split)
-    torch.save(train_set, '/root/partition-1-5-dataset.pth')
-    torch.save(val_set, '/root/partition-6-10-dataset.pth')
+    torch.save(train_set, '/root/train_set.pth')
+    torch.save(val_set, '/root/test_set.pth')
     
     ### train_set, val_set = random_split(dataset, [0.8, 0.2], generator=torch_rng)
     
