@@ -11,6 +11,7 @@ from tqdm import tqdm
 from skimage.transform import resize
 from utils import read_audio_st_ed
 from typing import List, Tuple
+import random
 
 def get_power_mel_spectrogram(y: np.ndarray, sr: int, eps: float=1e-5, debug: bool=False):
     S = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=224)
@@ -70,10 +71,10 @@ def get_gram(clip: np.ndarray, sr: int, use_chroma: bool=False):
 
 def process_audio_dir(audio_dir: str) -> List:
     drop_detection_path = [x for x in os.listdir(audio_dir) if x.endswith('.json') and 'detect' in x][0]
-    genre_annotation_path = [x for x in os.listdir(audio_dir) if x.endswith('.json') and 'anno' in x][0]
-    with open(drop_detection_path, "r") as f:
+    genre_annotation_path = [x for x in os.listdir(audio_dir) if x.endswith('.json') and 'refined' in x][0]
+    with open(os.path.join(audio_dir, drop_detection_path), "r") as f:
         detected_drops = json.load(f)
-    with open(genre_annotation_path, "r") as f:
+    with open(os.path.join(audio_dir, genre_annotation_path), "r") as f:
         genre_annotations = json.load(f)
         
     ret = [] # (path, soft_label, drop_sections)
@@ -119,8 +120,8 @@ def create_splits(audio_dirs: List[str], split_ratio: List[float], rng_seed: int
     for audio_dir in audio_dirs:
         data_list += process_audio_dir(audio_dir)
         
-    np.random.seed(rng_seed)
-    data_list = np.random.permutation(data_list)
+    random.seed(rng_seed)
+    random.shuffle(data_list)
     
     assert sum(split_ratio) == 1.0
     
@@ -149,7 +150,7 @@ class HouseXDataset(Dataset):
             
             self.track_names.append(os.path.basename(track_absolute_path))
             
-            genre_soft_label = torch.from_numpy(genre_soft_label).float()
+            genre_soft_label = torch.tensor(genre_soft_label).float()
             
             for drop_st, drop_ed in drop_sections:
                 y_cur, sr = read_audio_st_ed(track_absolute_path, drop_st, drop_ed)
