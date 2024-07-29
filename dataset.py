@@ -52,17 +52,31 @@ def get_chromagrams(y: np.ndarray, sr: int, intervals: str='ji5', debug: bool=Fa
     print(chroma_cq.shape, chroma_vq.shape)
     print(chroma_cq.min(), chroma_cq.max())
     print(chroma_vq.min(), chroma_vq.max())"""
+    
+def get_gram(clip: np.ndarray, sr: int, use_chroma: bool=False):
+    melspec = get_power_mel_spectrogram(clip, sr)
+                    
+    if not use_chroma:
+        gram = torch.from_numpy(melspec).repeat(3, 1, 1)
+    else:
+        chroma = get_chromagrams(clip, sr)
+                        
+        melspec = torch.from_numpy(melspec)
+        chroma = torch.from_numpy(chroma)
+        gram = torch.cat([melspec, chroma], dim=0)
+    
+    return gram
 
 
 class HouseXDataset(Dataset):
     def __init__(self,
         audio_dir: str,
-        drop_detection_path: str,
-        genre_annotation_path: str,
         # use_mel_spectrogram: bool=True,
         use_chroma: bool=True,
     ):
         super(HouseXDataset, self).__init__()
+        drop_detection_path = [x for x in os.listdir(audio_dir) if x.endswith('.json') and 'detect' in x][0]
+        genre_annotation_path = [x for x in os.listdir(audio_dir) if x.endswith('.json') and 'anno' in x][0]
         with open(drop_detection_path, "r") as f:
             self.detected_drops = json.load(f)
         with open(genre_annotation_path, "r") as f:
@@ -117,17 +131,7 @@ class HouseXDataset(Dataset):
                     clip_ed = clip_st + num_sample_per_clip
                     clip = y_cur[clip_st:clip_ed]
                     
-                    melspec = get_power_mel_spectrogram(clip, sr)
-                    
-                    if not use_chroma:
-                        gram = torch.from_numpy(melspec).repeat(3, 1, 1)
-                    else:
-                        chroma = get_chromagrams(clip, sr)
-                        
-                        melspec = torch.from_numpy(melspec)
-                        chroma = torch.from_numpy(chroma)
-                        gram = torch.cat([melspec, chroma], dim=0)
-                        ### print(gram.shape)
+                    gram = get_gram(clip, sr, use_chroma)
                     
                     self._data.append((gram, genre_soft_label))
                     
