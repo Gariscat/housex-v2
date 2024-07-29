@@ -11,6 +11,30 @@ import torch.nn.functional as F
 from torch.nn import TransformerEncoder, TransformerEncoderLayer
 from config import ALL_GENRES, HOP_FRAME
 from easydict import EasyDict as edict
+import math
+
+
+class PositionalEncoding(nn.Module):
+
+    def __init__(self, d_model: int, dropout: float = 0.1, max_len: int = 5000):
+        super().__init__()
+        self.dropout = nn.Dropout(p=dropout)
+
+        position = torch.arange(max_len).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, d_model, 2) * (-math.log(10000.0) / d_model))
+        pe = torch.zeros(max_len, 1, d_model)
+        pe[:, 0, 0::2] = torch.sin(position * div_term)
+        pe[:, 0, 1::2] = torch.cos(position * div_term)
+        self.register_buffer('pe', pe)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Arguments:
+            x: Tensor, shape ``[seq_len, batch_size, embedding_dim]``
+        """
+        x = x + self.pe[:x.size(0)]
+        return self.dropout(x)
+
 
 class HouseXModel(L.LightningModule):
     def __init__(self,
@@ -35,14 +59,15 @@ class HouseXModel(L.LightningModule):
         self.extractor = nn.Sequential(
             backbone,
             nn.ReLU(),
-            nn.Linear(1000, 768),
+            nn.Linear(1000, self.config.d_model),
             nn.Tanh()
         )
+        self.positional_encoding = PositionalEncoding(self.config.d_model)
         self.encoder = TransformerEncoder(
-            TransformerEncoderLayer(d_model=768, nhead=12),
+            TransformerEncoderLayer(d_model=self.config.d_model, nhead=12),
             num_layers=model_config.transformer_num_layers
         )
-        self.fc = nn.Linear(768, len(ALL_GENRES))
+        self.fc = nn.Linear(self.config.d_model, len(ALL_GENRES))
         
     def forward(self, x):
         b, c, h, w = x.shape

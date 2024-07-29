@@ -55,6 +55,7 @@ if __name__ == '__main__':
         'transformer_num_layers': 3,
         'loss_weight': None,
         'learning_rate': 1e-4,
+        'd_model': 768,
     })
     
     model = HouseXModel(model_config)
@@ -69,7 +70,7 @@ if __name__ == '__main__':
     )
     
     trainer = L.Trainer(
-        max_epochs=30,
+        max_epochs=20,
         logger=wandb_logger,
         log_every_n_steps=1,
     )
