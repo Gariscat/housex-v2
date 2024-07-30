@@ -131,14 +131,14 @@ class HouseXModel(L.LightningModule):
     def on_train_epoch_end(self):
         all_preds = torch.cat([_['pred'] for _ in self.train_step_outputs], dim=0)
         all_labels = torch.cat([_['label'] for _ in self.train_step_outputs], dim=0)
-        acc = torchmetrics.Accuracy(task="multiclass", num_classes=4)(all_preds, all_labels)
+        acc = torchmetrics.Accuracy(task="multiclass", num_classes=len(ALL_GENRES))(all_preds, all_labels)
         self.log("train_acc", acc)
         self.train_step_outputs.clear()  # free memory
     
     def on_validation_epoch_end(self):
         all_preds = torch.cat([_['pred'] for _ in self.validation_step_outputs], dim=0)
         all_labels = torch.cat([_['label'] for _ in self.validation_step_outputs], dim=0)
-        acc = torchmetrics.Accuracy(task="multiclass", num_classes=4)(all_preds, all_labels)
+        acc = torchmetrics.Accuracy(task="multiclass", num_classes=len(ALL_GENRES))(all_preds, all_labels)
         self.log("val_acc", acc)
         self.validation_step_outputs.clear()  # free memory
     
