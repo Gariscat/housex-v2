@@ -7,6 +7,7 @@ import numpy as np
 from argparse import ArgumentParser
 import json
 import soundfile as sf
+import torch
 
 class AudioPlayer:
     """
@@ -338,6 +339,37 @@ def find_drop(audio_path: str, debug: bool=False, left_trunc_sec: float=15, writ
         return ret
     with open('tmp.json', 'w') as f:
         json.dump(ret, f)
+
+
+def sharpen_label(soft_labels):
+    """
+    Sharpens soft labels by converting the highest value to 1 and the rest to 0.
+    If there are multiple maximum values, the latter one is chosen as 1.
+    
+    Args:
+    soft_labels (torch.Tensor): A tensor of soft labels.
+    
+    Returns:
+    torch.Tensor: A tensor with sharpened labels.
+    """
+    # Ensure the input is a tensor
+    if not isinstance(soft_labels, torch.Tensor):
+        raise TypeError("Input must be a torch.Tensor")
+    
+    # Find the maximum value
+    max_value = soft_labels.max().item()
+    
+    # Find the index of the last occurrence of the maximum value
+    max_indices = (soft_labels == max_value).nonzero(as_tuple=True)[0]
+    max_index = max_indices[-1].item()
+    
+    # Create a zero tensor of the same shape as soft_labels
+    sharpened_labels = torch.zeros_like(soft_labels)
+    
+    # Set the maximum index to 1
+    sharpened_labels[max_index] = 1
+    
+    return sharpened_labels
 
 
 if __name__ == '__main__':
