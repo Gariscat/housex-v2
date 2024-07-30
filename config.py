@@ -5,6 +5,7 @@ AUDIO_DIR = "/root/part-1-5"
 DROP_DETECTION_PATH = "/root/part-1-5/detected_drops.json"
 GENRE_LABEL_PATH = "/root/part-1-5/partition-1-5-refined.json"
 FRAME_LENGTH = 8192
+N_MELS = 224
 
 ALL_GENRES = [
     'Progressive House',
