@@ -8,6 +8,7 @@ from argparse import ArgumentParser
 import json
 import soundfile as sf
 import torch
+import pygame
 
 class AudioPlayer:
     """
@@ -39,8 +40,6 @@ class AudioPlayer:
             comment (str, optional): Additional comments about the audio file. Defaults to ''.
 
         """
-        import pygame
-        
         self.filepath = filepath
         pygame.mixer.init()
         pygame.mixer.music.load(filepath)
