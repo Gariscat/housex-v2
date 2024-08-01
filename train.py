@@ -24,7 +24,7 @@ if __name__ == '__main__':
     wb_config = deepcopy(model_config)
     wb_config.loss_weight = 'weighted' if wb_config is not None else None
     wb_config['comment'] = 'trial'
-    wb_config['batch_size'] = bs
+    wb_config['batch_size'] = 4
     wb_config['data_mode'] = 'full'
     
     train_test_ratio = [0.8, 0.2]
@@ -50,10 +50,9 @@ if __name__ == '__main__':
     lw = 1 / class_cnt
     lw /= lw.sum()
     lw = torch.tensor(lw, dtype=torch.float32)
-    bs = 4
     
-    train_loader = DataLoader(train_set, batch_size=bs, shuffle=True, generator=torch_rng)
-    val_loader = DataLoader(val_set, batch_size=bs, shuffle=False, generator=torch_rng)
+    train_loader = DataLoader(train_set, batch_size=wb_config['batch_size'], shuffle=True, generator=torch_rng)
+    val_loader = DataLoader(val_set, batch_size=wb_config['batch_size'], shuffle=False, generator=torch_rng)
     
     wandb_logger = WandbLogger(
         project="housex-v2-1-5",
