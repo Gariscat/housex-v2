@@ -10,13 +10,29 @@ from copy import deepcopy
 
 torch_rng = torch.Generator().manual_seed(42)
 
-if __name__ == '__main__':
+if __name__ == '__main__':   
+    model_config = edict({
+        'extractor_name': 'resnet34',
+        'transformer_num_layers': 1,
+        'loss_weight': None,
+        'learning_rate': 1e-4,
+        'd_model': 768,
+        'n_head': 3,
+    })
+    
+    model = HouseXModel(model_config)
+    wb_config = deepcopy(model_config)
+    wb_config.loss_weight = 'weighted' if wb_config is not None else None
+    wb_config['comment'] = 'trial'
+    wb_config['batch_size'] = bs
+    wb_config['data_mode'] = 'full'
+    
     train_test_ratio = [0.8, 0.2]
     train_split, test_split = create_splits(
         audio_dirs=['/root/part-1-5/', '/root/part-6-10/'],
         split_ratio=train_test_ratio,
         rng_seed=42,
-        mode='clean'
+        mode=wb_config['data_mode']
     )
     train_set = HouseXDataset(data_list=train_split, use_chroma=False)
     val_set = HouseXDataset(data_list=test_split, use_chroma=False)
@@ -39,21 +55,6 @@ if __name__ == '__main__':
     train_loader = DataLoader(train_set, batch_size=bs, shuffle=True, generator=torch_rng)
     val_loader = DataLoader(val_set, batch_size=bs, shuffle=False, generator=torch_rng)
     
-    model_config = edict({
-        'extractor_name': 'resnet34',
-        'transformer_num_layers': 1,
-        'loss_weight': None,
-        'learning_rate': 1e-4,
-        'd_model': 768,
-        'n_head': 3,
-    })
-    
-    model = HouseXModel(model_config)
-    wb_config = deepcopy(model_config)
-    wb_config.loss_weight = 'weighted' if wb_config is not None else None
-    wb_config['comment'] = 'trial'
-    wb_config['batch_size'] = bs
-    
     wandb_logger = WandbLogger(
         project="housex-v2-1-5",
         config=wb_config,
@@ -61,7 +62,7 @@ if __name__ == '__main__':
     )
     
     trainer = L.Trainer(
-        max_epochs=20,
+        max_epochs=10,
         logger=wandb_logger,
         log_every_n_steps=1,
         val_check_interval=0.25,

@@ -16,6 +16,7 @@ from config import ALL_GENRES, HOP_FRAME, N_MELS
 from easydict import EasyDict as edict
 import math
 import torchmetrics
+from utils import sharpen_label
 
 
 class PositionalEncoding(nn.Module):
@@ -113,7 +114,11 @@ class HouseXModel(L.LightningModule):
         loss = nn.CrossEntropyLoss(weight=self.config.loss_weight)(y_hat, y)
         self.log("train_loss", loss)
         
-        self.train_step_outputs.append({'pred': y_hat.argmax(-1), 'label':y.argmax(-1)})
+        y_sharpened = sharpen_label(y)
+        self.train_step_outputs.append({
+            'pred': y_hat.argmax(-1),
+            'label': y_sharpened.argmax(-1)
+        })
         
         return loss
     
@@ -125,7 +130,11 @@ class HouseXModel(L.LightningModule):
         loss = nn.CrossEntropyLoss(weight=self.config.loss_weight)(y_hat, y)
         self.log("val_loss", loss)
         
-        self.validation_step_outputs.append({'pred': y_hat.argmax(-1), 'label':y.argmax(-1)})
+        y_sharpened = sharpen_label(y)
+        self.validation_step_outputs.append({
+            'pred': y_hat.argmax(-1),
+            'label': y_sharpened.argmax(-1)
+        })
         
         return loss
     

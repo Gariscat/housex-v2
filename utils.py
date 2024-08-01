@@ -352,7 +352,7 @@ def sharpen_label(soft_labels):
     torch.Tensor: A tensor with sharpened labels.
     """
     # Ensure the input is a tensor
-    if not isinstance(soft_labels, torch.Tensor):
+    """if not isinstance(soft_labels, torch.Tensor):
         raise TypeError("Input must be a torch.Tensor")
     
     # Find the maximum value
@@ -368,6 +368,17 @@ def sharpen_label(soft_labels):
     # Set the maximum index to 1
     sharpened_labels[max_index] = 1
     
+    return sharpened_labels"""
+    n = soft_labels.shape[-1]
+    max_index = n - 1 - soft_labels.flip(-1).argmax(-1)
+    sharpened_labels = torch.zeros_like(soft_labels)
+    
+    if soft_labels.dim() == 1:
+        sharpened_labels[max_index] = 1
+    elif soft_labels.dim() == 2:
+        sharpened_labels.scatter_(1, max_index.unsqueeze(1), 1)
+    else:
+        raise ValueError("Label dimension should be not greater than 2.")
     return sharpened_labels
 
 
