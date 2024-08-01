@@ -7,17 +7,28 @@ import lightning as L
 from lightning.pytorch.loggers import WandbLogger
 from easydict import EasyDict as edict
 from copy import deepcopy
+from argparse import ArgumentParser
 
 torch_rng = torch.Generator().manual_seed(42)
 
-if __name__ == '__main__':   
+if __name__ == '__main__':
+    parser = ArgumentParser()
+    parser.add_argument('--extractor_name', type=str, default='resnet18')
+    parser.add_argument('--transformer_num_layers', type=int, default=1)
+    parser.add_argument('--loss_weight', type=str, default=None)
+    parser.add_argument('--learning_rate', type=float, default=1e-4)
+    parser.add_argument('--d_model', type=int, default=768)
+    parser.add_argument('--n_head', type=int, default=3)
+    parser.add_argument('--data_mode', type=str, default='full')
+    args = parser.parse_args()
+    
     model_config = edict({
-        'extractor_name': 'resnet34',
-        'transformer_num_layers': 1,
-        'loss_weight': None,
-        'learning_rate': 1e-4,
-        'd_model': 768,
-        'n_head': 3,
+        'extractor_name': args.extractor_name,
+        'transformer_num_layers': args.num_layers,
+        'loss_weight': args.loss_weight,
+        'learning_rate': args.learning_rate,
+        'd_model': args.d_model,
+        'n_head': args.n_head,
     })
     
     model = HouseXModel(model_config)
@@ -25,7 +36,7 @@ if __name__ == '__main__':
     wb_config.loss_weight = 'weighted' if wb_config is not None else None
     wb_config['comment'] = 'trial'
     wb_config['batch_size'] = 4
-    wb_config['data_mode'] = 'full'
+    wb_config['data_mode'] = args.data_mode
     
     train_test_ratio = [0.8, 0.2]
     train_split, test_split = create_splits(

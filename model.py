@@ -8,6 +8,8 @@ from torchvision.models import \
     resnext101_32x8d, ResNeXt101_32X8D_Weights, \
     resnet18, ResNet18_Weights, \
     resnet34, ResNet34_Weights, \
+    resnet50, ResNet50_Weights, \
+    resnet101, ResNet101_Weights, \
     densenet121, DenseNet121_Weights
 from torch import nn, optim
 import torch.nn.functional as F
@@ -63,6 +65,10 @@ class HouseXModel(L.LightningModule):
             backbone = resnet18(weights=ResNet18_Weights.DEFAULT)
         elif self.config.extractor_name == 'resnet34':
             backbone = resnet34(weights=ResNet34_Weights.DEFAULT)
+        elif self.config.extractor_name == 'resnet50':
+            backbone = resnet50(weights=ResNet50_Weights.DEFAULT)
+        elif self.config.extractor_name == 'resnet101':
+            backbone = resnet101(weights=ResNet101_Weights.DEFAULT)
         elif self.config.extractor_name == 'densenet121':
             backbone = densenet121(weights=DenseNet121_Weights.DEFAULT)
         
