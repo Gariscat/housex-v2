@@ -12,6 +12,7 @@ from skimage.transform import resize
 from utils import read_audio_st_ed, sharpen_label
 from typing import List, Tuple
 import random
+import soundfile as sf
 
 def get_power_mel_spectrogram(y: np.ndarray, sr: int, eps: float=1e-5, debug: bool=False):
     S = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=N_MELS)
@@ -142,11 +143,15 @@ class HouseXDataset(Dataset):
         data_list: List[Tuple],
         # use_mel_spectrogram: bool=True,
         use_chroma: bool=False,
+        audio_standalone_dir: str=None,
     ):
         super(HouseXDataset, self).__init__()
         
         self.track_names = []
         self._data = []
+        if audio_standalone_dir is not None:
+            os.makedirs(audio_standalone_dir, exist_ok=True)
+            self.clip_info = []
         
         for track_absolute_path, genre_soft_label, drop_sections in tqdm(data_list, desc="Creating dataset"):
             # assert len(track_info['annotations']) == 1
@@ -164,7 +169,7 @@ class HouseXDataset(Dataset):
                 ### print("  drop_loop_length:", drop_ed_sample - drop_st_sample)
                 ### print("  clip_length:", num_sample_per_clip)
                 
-                for _ in range(NUM_CLIP_PER_DROPLOOP):
+                for i in range(NUM_CLIP_PER_DROPLOOP):
                     clip_st = np.random.randint(0, drop_ed_sample - drop_st_sample - num_sample_per_clip)
                     clip_ed = clip_st + num_sample_per_clip
                     clip = y_cur[clip_st:clip_ed]
@@ -173,7 +178,20 @@ class HouseXDataset(Dataset):
                     
                     self._data.append((gram, genre_soft_label))
                     
+                    if audio_standalone_dir is not None:
+                        standalone_path = os.path.join(audio_standalone_dir, str(i+1)+os.path.basename(track_absolute_path))
+                        sf.write(standalone_path, clip, sr)
+                        
+                        self.clip_info.append({
+                            'track_path': standalone_path,
+                            'clip_start_time': librosa.samples_to_time(clip_st, sr=sr),
+                            'clip_end_time': librosa.samples_to_time(clip_ed, sr=sr),
+                        })
+                    
         print("total clips:", len(self._data))
+        if audio_standalone_dir:
+            with open(os.path.join(audio_standalone_dir, 'clip_info.json'), 'w') as f:
+                json.dump(self.clip_info, f)
             
     def __len__(self):
         return len(self._data)

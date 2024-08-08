@@ -24,7 +24,7 @@ if __name__ == '__main__':
     
     model_config = edict({
         'extractor_name': args.extractor_name,
-        'transformer_num_layers': args.num_layers,
+        'transformer_num_layers': args.transformer_num_layers,
         'loss_weight': args.loss_weight,
         'learning_rate': args.learning_rate,
         'd_model': args.d_model,
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     model = HouseXModel(model_config)
     wb_config = deepcopy(model_config)
     wb_config.loss_weight = 'weighted' if wb_config is not None else None
-    wb_config['comment'] = 'trial'
+    wb_config['comment'] = 'use-chroma'
     wb_config['batch_size'] = 4
     wb_config['data_mode'] = args.data_mode
     
@@ -45,10 +45,12 @@ if __name__ == '__main__':
         rng_seed=42,
         mode=wb_config['data_mode']
     )
-    train_set = HouseXDataset(data_list=train_split, use_chroma=False)
-    val_set = HouseXDataset(data_list=test_split, use_chroma=False)
+    
+    train_set = HouseXDataset(data_list=train_split, use_chroma=True, audio_standalone_dir='/root/standalone_train/')
+    val_set = HouseXDataset(data_list=test_split, use_chroma=True, audio_standalone_dir='/root/standalone_test/')
     torch.save(train_set, '/root/train_set.pth')
     torch.save(val_set, '/root/test_set.pth')
+    
     """
     train_set = torch.load('/root/train_set.pth')
     val_set = torch.load('/root/test_set.pth')
@@ -61,12 +63,12 @@ if __name__ == '__main__':
     lw = 1 / class_cnt
     lw /= lw.sum()
     lw = torch.tensor(lw, dtype=torch.float32)
-    
+
     train_loader = DataLoader(train_set, batch_size=wb_config['batch_size'], shuffle=True, generator=torch_rng)
     val_loader = DataLoader(val_set, batch_size=wb_config['batch_size'], shuffle=False, generator=torch_rng)
     
     wandb_logger = WandbLogger(
-        project="housex-v2-1-5",
+        project="housex-v2-grid",
         config=wb_config,
         save_dir='/root'
     )
