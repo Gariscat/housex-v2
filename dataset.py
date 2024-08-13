@@ -13,6 +13,7 @@ from utils import read_audio_st_ed, sharpen_label
 from typing import List, Tuple
 import random
 import soundfile as sf
+from argparse import ArgumentParser
 
 def get_power_mel_spectrogram(y: np.ndarray, sr: int, eps: float=1e-5, debug: bool=False):
     S = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=N_MELS)
@@ -72,7 +73,7 @@ def get_gram(clip: np.ndarray, sr: int, use_chroma: bool=False):
 
 def process_audio_dir(audio_dir: str, mode: str='full') -> List:
     drop_detection_path = [x for x in os.listdir(audio_dir) if x.endswith('.json') and 'detect' in x][0]
-    genre_annotation_path = [x for x in os.listdir(audio_dir) if x.endswith('.json') and 'refined' in x][0]
+    genre_annotation_path = [x for x in os.listdir(audio_dir) if x.endswith('.json') and 'partition' in x][0]
     with open(os.path.join(audio_dir, drop_detection_path), "r") as f:
         detected_drops = json.load(f)
     with open(os.path.join(audio_dir, genre_annotation_path), "r") as f:
@@ -150,7 +151,9 @@ class HouseXDataset(Dataset):
         self.track_names = []
         self._data = []
         if audio_standalone_dir is not None:
-            os.makedirs(audio_standalone_dir, exist_ok=True)
+            import shutil
+            shutil.rmtree(audio_standalone_dir, ignore_errors=True)
+            os.makedirs(audio_standalone_dir, exist_ok=False)
             self.clip_info = []
         
         for track_absolute_path, genre_soft_label, drop_sections in tqdm(data_list, desc="Creating dataset"):
@@ -202,4 +205,19 @@ class HouseXDataset(Dataset):
     
     
 if __name__ == "__main__":
-    pass
+    parser = ArgumentParser()
+    parser.add_argument('--mode', type=str, default='full')
+    args = parser.parse_args()
+    
+    train_test_ratio = [0.8, 0.2]
+    train_split, test_split = create_splits(
+        audio_dirs=['/root/part-1-5/', '/root/part-6-10/', '/root/part-new/', ],
+        split_ratio=train_test_ratio,
+        rng_seed=42,
+        mode=args.mode,
+    )
+    
+    train_set = HouseXDataset(data_list=train_split, use_chroma=True, audio_standalone_dir='/root/standalone_train/')
+    val_set = HouseXDataset(data_list=test_split, use_chroma=True, audio_standalone_dir='/root/standalone_test/')
+    torch.save(train_set, '/root/train_set.pth')
+    torch.save(val_set, '/root/test_set.pth')
