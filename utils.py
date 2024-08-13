@@ -379,6 +379,7 @@ def sharpen_label(soft_labels):
     
     n = soft_labels.shape[-1]
     max_index = n - 1 - soft_labels.flip(-1).argmax(-1)
+    # max_index = n - 1 - np.flip(soft_labels, -1).argmax(-1)
     sharpened_labels = torch.zeros_like(soft_labels)
     
     if soft_labels.dim() == 1:

@@ -93,7 +93,7 @@ def process_audio_dir(audio_dir: str, mode: str='full') -> List:
             genre_id = ALL_GENRES.index(genre_info['from_name'])
             genre_soft_label[genre_id] = genre_info['value']["number"]
             
-        # genre_soft_label = torch.from_numpy(genre_soft_label).float()
+        genre_soft_label = torch.from_numpy(genre_soft_label).float()
         try:
             assert genre_soft_label.sum().item() == 1.0
         except:
@@ -116,7 +116,7 @@ def process_audio_dir(audio_dir: str, mode: str='full') -> List:
         if drop_sections is None: # drop not detected by rule-based algo
             continue
         
-        ret.append((track_absolute_path, genre_soft_label.tolist(), drop_sections))
+        ret.append((track_absolute_path, genre_soft_label, drop_sections))
         
     return ret
 
