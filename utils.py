@@ -7,8 +7,7 @@ import numpy as np
 from argparse import ArgumentParser
 import json
 import soundfile as sf
-import torch
-import pygame
+
 
 class AudioPlayer:
     """
@@ -40,6 +39,7 @@ class AudioPlayer:
             comment (str, optional): Additional comments about the audio file. Defaults to ''.
 
         """
+        import pygame
         self.filepath = filepath
         pygame.mixer.init()
         pygame.mixer.music.load(filepath)
@@ -375,6 +375,8 @@ def sharpen_label(soft_labels):
     sharpened_labels[max_index] = 1
     
     return sharpened_labels"""
+    import torch
+    
     n = soft_labels.shape[-1]
     max_index = n - 1 - soft_labels.flip(-1).argmax(-1)
     sharpened_labels = torch.zeros_like(soft_labels)
