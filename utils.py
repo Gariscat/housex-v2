@@ -248,7 +248,13 @@ def read_audio_st_ed(audio_path: str, st: float, ed: float):
     return y, sr
 
 
-def find_drop(audio_path: str, debug: bool=False, left_trunc_sec: float=15, write_to_tmp: bool=True):
+def find_drop(
+    audio_path: str,
+    debug: bool=False,
+    left_trunc_sec: float=15,
+    write_to_tmp: bool=True,
+    thres_margin: float=2,
+):
     """Detects the drop in an EDM track.
 
     Args:
@@ -287,7 +293,7 @@ def find_drop(audio_path: str, debug: bool=False, left_trunc_sec: float=15, writ
     plt.close()
     """
     max_db = np.max(loudness)
-    threshold = max_db - 1.5 # -1.5dB
+    threshold = max_db - thres_margin # -2dB
     is_drop = (loudness >= threshold).astype(int)
     """"""
     
