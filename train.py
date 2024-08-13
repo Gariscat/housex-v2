@@ -20,6 +20,7 @@ if __name__ == '__main__':
     parser.add_argument('--d_model', type=int, default=768)
     parser.add_argument('--n_head', type=int, default=3)
     parser.add_argument('--data_mode', type=str, default='full')
+    parser.add_argument('--project', type=str, default='housex-v2-dataset')
     args = parser.parse_args()
     
     model_config = edict({
@@ -68,7 +69,7 @@ if __name__ == '__main__':
     val_loader = DataLoader(val_set, batch_size=wb_config['batch_size'], shuffle=False, generator=torch_rng)
     
     wandb_logger = WandbLogger(
-        project="housex-v2-grid",
+        project=args.project,
         config=wb_config,
         save_dir='/root'
     )
