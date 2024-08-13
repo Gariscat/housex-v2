@@ -161,7 +161,7 @@ class HouseXDataset(Dataset):
             
             self.track_names.append(os.path.basename(track_absolute_path))
             
-            genre_soft_label = torch.tensor(genre_soft_label).float()
+            # genre_soft_label = torch.tensor(genre_soft_label).float()
             
             for drop_st, drop_ed in drop_sections:
                 y_cur, sr = read_audio_st_ed(track_absolute_path, drop_st, drop_ed)
