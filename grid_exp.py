@@ -3,7 +3,7 @@ import subprocess
 from itertools import product
 
 # EXTRACTORS = ('resnet18', 'resnet50', 'resnet152',)
-EXTRACTORS = ('vgg11_bn', 'densenet201', 'resnet152', 'resnext101_32x8d', 'vit_b_16')
+EXTRACTORS = ('vgg11_bn', 'densenet201', 'resnet152', 'resnext101_32x8d', )
 # T_NUM_LAYERS = (1, 2, 4,)
 T_NUM_LAYERS = (1, )
 # N_HEADS = (1, 2, 4,)
@@ -18,3 +18,5 @@ if __name__ == '__main__':
                     --project {"hx-v2-new-data"}', \
                     shell=True
                 )
+        
+    os.system("/usr/bin/shutdown")
