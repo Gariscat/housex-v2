@@ -8,7 +8,7 @@ from lightning.pytorch.loggers import WandbLogger
 from easydict import EasyDict as edict
 from copy import deepcopy
 from argparse import ArgumentParser
-from pytorch_lightning.callbacks import ModelCheckpoint
+from lightning.pytorch.callbacks import ModelCheckpoint
 
 torch_rng = torch.Generator().manual_seed(42)
 torch.set_float32_matmul_precision('high')
@@ -77,5 +77,6 @@ if __name__ == '__main__':
         logger=wandb_logger,
         log_every_n_steps=1,
         val_check_interval=0.25,
+        # enable_checkpointing=False,
     )
     trainer.fit(model=model, train_dataloaders=train_loader, val_dataloaders=val_loader)
