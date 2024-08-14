@@ -165,17 +165,19 @@ class HouseXDataset(Dataset):
             
             for drop_st, drop_ed in drop_sections:
                 y_cur, sr = read_audio_st_ed(track_absolute_path, drop_st, drop_ed)
+                ### print("sample rate:", sr)
                 drop_st_sample = librosa.time_to_samples(drop_st, sr=sr)
                 drop_ed_sample = librosa.time_to_samples(drop_ed, sr=sr)
                 num_sample_per_clip = int(NUM_SECONDS_PER_CLIP * sr)
-                
+                drop_num_sample = drop_ed_sample - drop_st_sample
                 ### print("  drop_loop_length:", drop_ed_sample - drop_st_sample)
                 ### print("  clip_length:", num_sample_per_clip)
                 
                 for i in range(NUM_CLIP_PER_DROPLOOP):
-                    clip_st = np.random.randint(0, drop_ed_sample - drop_st_sample - num_sample_per_clip)
+                    clip_st = np.random.randint(0, drop_num_sample - num_sample_per_clip)
                     clip_ed = clip_st + num_sample_per_clip
                     clip = y_cur[clip_st:clip_ed]
+                    assert clip_ed <= drop_num_sample
                     
                     gram = get_gram(clip, sr, use_chroma)
                     
@@ -211,7 +213,7 @@ if __name__ == "__main__":
     
     train_test_ratio = [0.8, 0.2]
     train_split, test_split = create_splits(
-        audio_dirs=['/root/part-1-5/', '/root/part-6-10/', '/root/part-new/', ],
+        audio_dirs=['/root/part-new/', '/root/part-1-5/', '/root/part-6-10/'],
         split_ratio=train_test_ratio,
         rng_seed=42,
         mode=args.mode,
