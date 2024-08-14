@@ -8,8 +8,10 @@ from lightning.pytorch.loggers import WandbLogger
 from easydict import EasyDict as edict
 from copy import deepcopy
 from argparse import ArgumentParser
+from pytorch_lightning.callbacks import ModelCheckpoint
 
 torch_rng = torch.Generator().manual_seed(42)
+torch.set_float32_matmul_precision('high')
 
 if __name__ == '__main__':
     parser = ArgumentParser()
@@ -61,7 +63,16 @@ if __name__ == '__main__':
         save_dir='/root'
     )
     
+    checkpoint_callback = ModelCheckpoint(
+        monitor='val_acc',    # The metric to monitor (validation accuracy in this case)
+        mode='max',                # Save the checkpoint with the maximum accuracy
+        save_top_k=1,              # Save only the best checkpoint
+        dirpath='/root/checkpoints/',    # Directory where the checkpoints will be saved
+        filename=f'{args.extractor_name}-{args.transformer_num_layers}-{args.n_head}' # Filename for the best checkpoint
+    )
+    
     trainer = L.Trainer(
+        callbacks=[checkpoint_callback],
         max_epochs=10,
         logger=wandb_logger,
         log_every_n_steps=1,
