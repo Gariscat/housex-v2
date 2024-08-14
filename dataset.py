@@ -191,6 +191,7 @@ class HouseXDataset(Dataset):
                             'track_path': standalone_path,
                             'clip_start_time': librosa.samples_to_time(clip_st, sr=sr),
                             'clip_end_time': librosa.samples_to_time(clip_ed, sr=sr),
+                            'label': genre_soft_label.numpy().tolist(),
                         })
                     
         print("total clips:", len(self._data))
