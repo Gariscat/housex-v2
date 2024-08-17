@@ -3,7 +3,7 @@ import subprocess
 from itertools import product
 
 # EXTRACTORS = ('resnet18', 'resnet50', 'resnet152',)
-EXTRACTORS = ('vgg11_bn', 'densenet201', 'resnet152', 'resnext101_32x8d', )
+EXTRACTORS = ('resnet152', 'densenet201', 'vgg11_bn', 'resnext101_32x8d', 'vit_b_16')
 # T_NUM_LAYERS = (1, 2, 4,)
 T_NUM_LAYERS = (1, )
 # N_HEADS = (1, 2, 4,)
