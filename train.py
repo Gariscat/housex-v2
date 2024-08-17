@@ -25,7 +25,7 @@ if __name__ == '__main__':
     parser.add_argument('--n_head', type=int, default=3)
     parser.add_argument('--data_mode', type=str, default='full')
     parser.add_argument('--project', type=str, default='housex-v2-dataset')
-    parser.add_argument('--ckpt_dir', type=str, default='/root/checkpoints')
+    parser.add_argument('--ckpt_dir', type=str, default='/root/autodl-tmp/checkpoints')
     
     args = parser.parse_args()
     os.makedirs(args.ckpt_dir, exist_ok=True)
