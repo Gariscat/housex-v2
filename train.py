@@ -9,6 +9,8 @@ from easydict import EasyDict as edict
 from copy import deepcopy
 from argparse import ArgumentParser
 from lightning.pytorch.callbacks import ModelCheckpoint
+import os
+import json
 
 torch_rng = torch.Generator().manual_seed(42)
 torch.set_float32_matmul_precision('high')
@@ -23,6 +25,9 @@ if __name__ == '__main__':
     parser.add_argument('--n_head', type=int, default=3)
     parser.add_argument('--data_mode', type=str, default='full')
     parser.add_argument('--project', type=str, default='housex-v2-dataset')
+    parser.add_argument('--ckpt_dir', type=str, default='/root/checkpoints')
+    os.makedirs(parser.ckpt_dir, exist_ok=True)
+    
     args = parser.parse_args()
     
     model_config = edict({
@@ -67,7 +72,7 @@ if __name__ == '__main__':
         monitor='val_acc',    # The metric to monitor (validation accuracy in this case)
         mode='max',                # Save the checkpoint with the maximum accuracy
         save_top_k=1,              # Save only the best checkpoint
-        dirpath='/root/checkpoints/',    # Directory where the checkpoints will be saved
+        dirpath=args.ckpt_dir,    # Directory where the checkpoints will be saved
         filename=f'{args.extractor_name}-{args.transformer_num_layers}-{args.n_head}' # Filename for the best checkpoint
     )
     
@@ -80,3 +85,12 @@ if __name__ == '__main__':
         # enable_checkpointing=False,
     )
     trainer.fit(model=model, train_dataloaders=train_loader, val_dataloaders=val_loader)
+    
+    model.load_from_checkpoint(checkpoint_callback.best_model_path)
+    with open(os.path.join(args.ckpt_dir, f'{args.extractor_name}-{args.transformer_num_layers}-{args.n_head}.json'), 'w') as f:
+        ret = {}
+        ret['train_res'] = model.train_metric_results
+        ret['val_res'] = model.val_metric_results
+        json.dump(ret, f)
+        
+        print('Results saved to', f.name)

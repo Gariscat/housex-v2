@@ -7,6 +7,7 @@ import numpy as np
 from argparse import ArgumentParser
 import json
 import soundfile as sf
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 
 
 class AudioPlayer:
@@ -389,6 +390,40 @@ def sharpen_label(soft_labels):
     else:
         raise ValueError("Label dimension should be not greater than 2.")
     return sharpened_labels
+
+
+def compute_metrics(predictions, targets, average='weighted'):
+    """
+    Computes accuracy, precision, recall, F1-score, and confusion matrix for a classification problem.
+
+    Parameters:
+    - predictions (np.array): Predicted labels.
+    - targets (np.array): True labels.
+    - average (str): Averaging strategy for precision, recall, and F1-score ('binary', 'micro', 'macro', 'weighted').
+
+    Returns:
+    - dict: A dictionary containing the computed metrics.
+    """
+
+    # Compute accuracy
+    accuracy = accuracy_score(targets, predictions)
+
+    # Compute precision, recall, and F1-score
+    precision = precision_score(targets, predictions, average=average)
+    recall = recall_score(targets, predictions, average=average)
+    f1 = f1_score(targets, predictions, average=average)
+
+    # Compute confusion matrix
+    cm = confusion_matrix(targets, predictions)
+
+    # Return the metrics as a dictionary
+    return {
+        'accuracy': accuracy,
+        'precision': precision,
+        'recall': recall,
+        'f1_score': f1,
+        'confusion_matrix': cm
+    }
 
 
 if __name__ == '__main__':
