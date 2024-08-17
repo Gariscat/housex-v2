@@ -15,7 +15,7 @@ if __name__ == '__main__':
                     --extractor_name {e} \
                     --transformer_num_layer {t} \
                     --n_head {n} \
-                    --project {"hx-v2-new-data"}', \
+                    --project {"hx-v2-new-data-full-report"}', \
                     shell=True
                 )
         

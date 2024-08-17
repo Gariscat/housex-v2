@@ -26,9 +26,9 @@ if __name__ == '__main__':
     parser.add_argument('--data_mode', type=str, default='full')
     parser.add_argument('--project', type=str, default='housex-v2-dataset')
     parser.add_argument('--ckpt_dir', type=str, default='/root/checkpoints')
-    os.makedirs(parser.ckpt_dir, exist_ok=True)
     
     args = parser.parse_args()
+    os.makedirs(args.ckpt_dir, exist_ok=True)
     
     model_config = edict({
         'extractor_name': args.extractor_name,
