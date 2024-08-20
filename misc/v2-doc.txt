@@ -1,0 +1,114 @@
+**Preface:**
+
+
+1. All tracks collected are in 4/4 time. In all cases, 4 kick drum hits in the drop section correspond to 1 bar, with each kick drum hit corresponding to a quarter note.
+
+
+2. Groove is NOT equivalent to rhythm pattern: Rhythm pattern discusses the distribution of long and short notes, while groove focuses on the overall wave-like feeling of a track (quantitatively, it can be referenced to the ADSR synthesis curve), mainly controlled by A (attack).
+
+
+3. Distortion is NOT equivalent to "electronic": Clean is the opposite of distorted. Electronic timbres can also be clean (without much white noise or clipping). Electronic is opposite to acoustic, and electronic sounds might even be less distorted than acoustic ones. For example, a synthesized violin lacks the texture (mainly some nuance of white noise) of a real violin's bow on strings, resulting in less distortion.
+
+
+4. House music classifications are not necessarily absolute or unique. Even Techno might refer to different styles in different contexts. Therefore, we aim to establish a self-consistent set of standards here.
+
+
+
+
+**Progressive House** (*Martin Garrix, Manse, Tobu*):
+Highly melodic, regular groove, main sound usually super saw/piano/strings or their combination.
+[Criteria: Regular groove, strong main melody, quite often emotional or uplifting/euphoric]
+
+
+**Future House**:
+Irregular groove, less melodic than Prog House but still noticeable, overall tech/futuristic feel:
+1. General Future House (*Mo Falk*): Chords might have electric piano/some synthesizers, main sound is synthesizer (square wave, etc.) or some unconventional but not too distorted timbres.
+2. Future Bounce (*Brooks, Amel*): Extremely fragmented rhythm pattern, quite distorted main sound, very bouncy feel.
+[Criteria: Fragmented rhythm, identifiable main melody, quite cool]
+
+
+**Bass House** (*Julian Jordan, Blinders*):
+No lead instrument or non-melodic lead instrument, chord progression almost indistinguishable, many distorted sounds/samples, very noisy (suitable for outdoor music festivals), some have a dark vibe.
+[Criteria: Agitated, no main melody, often has aggressive dubstep samples like growling/stab after the first beat kick drum in each bar]
+
+
+**Techno House** (*NUZB*):
+Similar to Bass House but not as noisy, more suitable for dance halls and bars where the atmosphere is not as hyped.
+[Criteria: No main melody, kick drum not as heavy (bouncier), many electronic sounds/samples]
+
+
+**Deep House** (*Citadelle*):
+Even quieter than Techno House, smooth groove, strong atmosphere, large reverb, mostly slower rhythm (around 120 bpm, while the above genres are mostly 126-128 bpm).
+[Criteria: Deep, large reverb in mid-high frequency range, low end often uses Reese Bass]
+
+
+**Bigroom** (*Hardwell, Dimitri Vegas & Like Mike, W&W*):
+"Festival EDM", very hyped, many lead sounds resemble suona (Chinese double-reed horn).
+[Criteria: Noisy, extremely short attack, extremely heavy kick drum with audible pitch, to the extent that a separate bass instrument is not needed]
+
+
+**Future Rave** (*David Guetta*):
+Relatively regular groove, bass with moderate attack and wave-like feel, many main sounds similar to electronically processed farting :) or some other quite electronic timbres.
+[Criteria: Main sound timbre, overall wave-like feel]
+
+
+**Slap House** (*R3HAB*):
+Popular BGM of short videos, most have vocals, bass is very bouncy but not as fragmented as Future Bounce, often without chord instruments (bass provides some mid and high frequencies).
+[Criteria: Bouncy feel and rhythm pattern of the bass, many are remixes of pop songs]
+
+
+
+
+
+
+Below are some extra references provided by GPT-4o, the latest and most powerful multimodal LLM by OpenAI. Some minor modifications are conducted to make them consistent with our standards.
+
+
+1. Progressive House
+- Basslines: Smooth and evolving, often subtle.
+- Tempo: Around 126-128 BPM.
+- Melody and Harmony: Long build-ups, euphoric melody, and progressive chord progressions.
+- Percussion: Steady and driving, with an emphasis on a continuous groove.
+- Vocals: Minimal or ethereal, adding to the atmospheric build.
+2. Future House/Future Bounce
+- Basslines: Bouncy, prominent, and heavily side-chained.
+- Tempo: Around 125-130 BPM.
+- Melody and Harmony: bright synth and playful melodies.
+- Percussion: Punchy and prominent, creating high energy.
+- Vocals: Often chopped and used rhythmically.
+3. Bass House
+- Basslines: Aggressive, growling, and dominant.
+- Tempo: Around 126-130 BPM.
+- Melody and Harmony: Minimal melody, focusing on heavy bass.
+- Percussion: Hard-hitting and energetic, often with syncopated rhythms.
+- Vocals: Sporadic and often used to enhance the intensity.
+4. Tech House
+- Basslines: Deep and driving, with a repetitive groove.
+- Tempo: Around 120-125 BPM.
+- Melody and Harmony: Minimalistic, focusing on rhythmic elements and subtle synths.
+- Percussion: Crisp and intricate, with a strong emphasis on hi-hats and claps.
+- Vocals: Often minimal or sampled, adding to the hypnotic feel.
+5. Bigroom
+- Basslines: Simple and powerful, designed for impact.
+- Tempo: Around 125-130 BPM.
+- Melody and Harmony: Anthemic and straightforward melodies with big lead.
+- Percussion: Loud and punchy, with a focus on creating a massive sound.
+- Vocals: Often catchy and anthemic, leading into explosive drops.
+6. Deep House
+- Basslines: Smooth, groovy, and melodic.
+- Tempo: Around 115-125 BPM.
+- Melody and Harmony: Lush chords, smooth pads, and immersive atmospheres.
+- Percussion: Soft and laid-back, creating a steady groove.
+- Vocals: Soulful and emotive, enhancing the track's mood.
+7. Future Rave
+- Basslines: Driving and pulsating, with a futuristic feel.
+- Tempo: Around 125-130 BPM.
+- Melody and Harmony: Dark, rave-inspired synths with intense buildups.
+- Percussion: Energetic and relentless, creating a high-octane atmosphere.
+- Vocals: Sparse and often processed, adding to the futuristic vibe.
+8. Slap House/Brazilian Bass
+- Basslines: Slap-like (pluck-like), deep, and rhythmic.
+- Tempo: Around 115-125 BPM.
+- Melody and Harmony: Prominent with catchy hooks.
+- Percussion: Tight and punchy, with a focus on groove.
+- Vocals: Often repetitive and catchy, enhancing the track's danceability.
