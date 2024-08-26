@@ -26,6 +26,7 @@ if __name__ == '__main__':
     parser.add_argument('--data_mode', type=str, default='full')
     parser.add_argument('--project', type=str, default='housex-v2-dataset')
     parser.add_argument('--ckpt_dir', type=str, default='/root/autodl-tmp/checkpoints')
+    parser.add_argument('--comment_on_save', type=str, default='')
     
     args = parser.parse_args()
     os.makedirs(args.ckpt_dir, exist_ok=True)
@@ -87,7 +88,7 @@ if __name__ == '__main__':
     trainer.fit(model=model, train_dataloaders=train_loader, val_dataloaders=val_loader)
     
     model.load_from_checkpoint(checkpoint_callback.best_model_path)
-    with open(os.path.join(args.ckpt_dir, f'{args.extractor_name}-{args.transformer_num_layers}-{args.n_head}.json'), 'w') as f:
+    with open(os.path.join(args.ckpt_dir, f'{args.extractor_name}-{args.transformer_num_layers}-{args.n_head}-{args.comment_on_save}.json'), 'w') as f:
         ret = {}
         ret['train_res'] = model.train_metric_results
         ret['val_res'] = model.val_metric_results
