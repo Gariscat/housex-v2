@@ -210,17 +210,18 @@ class HouseXDataset(Dataset):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument('--mode', type=str, default='full')
+    parser.add_argument('--use_chroma', type=bool, default=True)
     args = parser.parse_args()
     
     train_test_ratio = [0.8, 0.2]
     train_split, test_split = create_splits(
-        audio_dirs=['/root/part-new/', '/root/part-1-5/', '/root/part-6-10/'],
+        audio_dirs=['/root/autodl-tmp/part-new/', '/root/autodl-tmp/part-1-5/', '/root/autodl-tmp/part-6-10/'],
         split_ratio=train_test_ratio,
         rng_seed=42,
         mode=args.mode,
     )
     
-    train_set = HouseXDataset(data_list=train_split, use_chroma=True, audio_standalone_dir='/root/standalone_train/')
-    val_set = HouseXDataset(data_list=test_split, use_chroma=True, audio_standalone_dir='/root/standalone_test/')
+    train_set = HouseXDataset(data_list=train_split, use_chroma=args.use_chroma, audio_standalone_dir='/root/standalone_train/')
+    val_set = HouseXDataset(data_list=test_split, use_chroma=args.use_chroma, audio_standalone_dir='/root/standalone_test/')
     torch.save(train_set, '/root/train_set.pth')
     torch.save(val_set, '/root/test_set.pth')
