@@ -151,7 +151,7 @@ class HouseXModel(L.LightningModule):
         all_preds = torch.cat([_['pred'] for _ in self.train_step_outputs], dim=0)
         all_labels = torch.cat([_['label'] for _ in self.train_step_outputs], dim=0)
         
-        self.train_metric_results = compute_metrics(all_preds.numpy(), all_labels.numpy())
+        self.train_metric_results = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
         
         self.monitor_metric = self.monitor_metric.to(all_preds.device)
         acc = self.monitor_metric(all_preds, all_labels).item()
@@ -163,7 +163,7 @@ class HouseXModel(L.LightningModule):
         all_preds = torch.cat([_['pred'] for _ in self.validation_step_outputs], dim=0)
         all_labels = torch.cat([_['label'] for _ in self.validation_step_outputs], dim=0)
         
-        self.val_metric_results = compute_metrics(all_preds.numpy(), all_labels.numpy())
+        self.val_metric_results = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
         
         self.monitor_metric = self.monitor_metric.to(all_preds.device)
         acc = self.monitor_metric(all_preds, all_labels).item()
