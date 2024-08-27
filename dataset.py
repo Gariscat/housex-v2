@@ -215,13 +215,13 @@ if __name__ == "__main__":
     
     train_test_ratio = [0.8, 0.2]
     train_split, test_split = create_splits(
-        audio_dirs=['/root/autodl-tmp/part-new/', '/root/autodl-tmp/part-1-5/', '/root/autodl-tmp/part-6-10/'],
+        audio_dirs=['~/raw_audio/part-new/', '~/raw_audio/part-1-5/', '~/raw_audio/part-6-10/'],
         split_ratio=train_test_ratio,
         rng_seed=42,
         mode=args.mode,
     )
-    
-    train_set = MainstageDataset(data_list=train_split, use_chroma=args.use_chroma, audio_standalone_dir='/root/standalone_train/')
-    val_set = MainstageDataset(data_list=test_split, use_chroma=args.use_chroma, audio_standalone_dir='/root/standalone_test/')
-    torch.save(train_set, '/root/train_set.pth')
-    torch.save(val_set, '/root/test_set.pth')
+    os.makedirs('~/processed_data', exist_ok=True)
+    train_set = MainstageDataset(data_list=train_split, use_chroma=args.use_chroma, audio_standalone_dir=f'~/raw_audio/standalone_train_{args.mode}/')
+    val_set = MainstageDataset(data_list=test_split, use_chroma=args.use_chroma, audio_standalone_dir=f'~/raw_audio/standalone_test_{args.mode}/')
+    torch.save(train_set, f'~/processed_data/train_set_{args.mode}.pth')
+    torch.save(val_set, f'~/processed_data/test_set_{args.mode}.pth')
