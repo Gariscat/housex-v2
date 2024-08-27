@@ -1,6 +1,6 @@
 from config import *
-from dataset import HouseXDataset, create_splits
-from model import HouseXModel
+from dataset import MainstageDataset, create_splits
+from model import MainstageModel
 from torch.utils.data import DataLoader, random_split
 import torch
 import lightning as L
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     parser.add_argument('--d_model', type=int, default=768)
     parser.add_argument('--n_head', type=int, default=3)
     parser.add_argument('--data_mode', type=str, default='full')
-    parser.add_argument('--project', type=str, default='housex-v2-dataset')
+    parser.add_argument('--project', type=str, default='Mainstage-v2-dataset')
     parser.add_argument('--ckpt_dir', type=str, default='/root/autodl-tmp/checkpoints')
     parser.add_argument('--comment_on_save', type=str, default='')
     
@@ -40,7 +40,7 @@ if __name__ == '__main__':
         'n_head': args.n_head,
     })
     
-    model = HouseXModel(model_config)
+    model = MainstageModel(model_config)
     wb_config = deepcopy(model_config)
     wb_config.loss_weight = 'weighted' if wb_config is not None else None
     wb_config['comment'] = 'create-dataset'
