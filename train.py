@@ -26,7 +26,7 @@ if __name__ == '__main__':
     parser.add_argument('--project', type=str, default='Mainstage-v2-dataset')
     parser.add_argument('--ckpt_dir', type=str, default='~/checkpoints')
     parser.add_argument('--comment', type=str, default='')
-    parser.add_argument('--use_chroma', type=bool, default=True)
+    parser.add_argument('--use_chroma', default=False, action='store_true')
     parser.add_argument('--mode', type=str, default='full')
     parser.add_argument('--gpu_id', type=int, default=-1)
     

@@ -210,18 +210,18 @@ class MainstageDataset(Dataset):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument('--mode', type=str, default='full')
-    parser.add_argument('--use_chroma', type=bool, default=True)
+    parser.add_argument('--use_chroma', default=False, action='store_true')
     args = parser.parse_args()
-    
+
     train_test_ratio = [0.8, 0.2]
     train_split, test_split = create_splits(
-        audio_dirs=['~/raw_audio/part-new/', '~/raw_audio/part-1-5/', '~/raw_audio/part-6-10/'],
+        audio_dirs=['/home/ca7ax/Desktop/audio-data-with-json/part-new/', '/home/ca7ax/Desktop/audio-data-with-json/part-1-5/', '/home/ca7ax/Desktop/audio-data-with-json/part-6-10/'],
         split_ratio=train_test_ratio,
         rng_seed=42,
         mode=args.mode,
     )
-    os.makedirs('~/processed_data', exist_ok=True)
-    train_set = MainstageDataset(data_list=train_split, use_chroma=args.use_chroma, audio_standalone_dir=f'~/raw_audio/standalone_train/')
-    val_set = MainstageDataset(data_list=test_split, use_chroma=args.use_chroma, audio_standalone_dir=f'~/raw_audio/standalone_test/')
-    torch.save(train_set, f'~/processed_data/train_set_{args.mode}_{str(args.use_chroma)}.pth')
-    torch.save(val_set, f'~/processed_data/test_set_{args.mode}_{str(args.use_chroma)}.pth')
+    # os.makedirs('~/processed_data', exist_ok=True)
+    train_set = MainstageDataset(data_list=train_split, use_chroma=args.use_chroma, audio_standalone_dir=f'/home/ca7ax/Desktop/audio-data-with-json/standalone_train/')
+    val_set = MainstageDataset(data_list=test_split, use_chroma=args.use_chroma, audio_standalone_dir=f'/home/ca7ax/Desktop/audio-data-with-json/standalone_test/')
+    torch.save(train_set, f'/home/ca7ax/Desktop/audio-data-with-json/train_set_{args.mode}_{str(args.use_chroma)}.pth')
+    torch.save(val_set, f'/home/ca7ax/Desktop/audio-data-with-json/test_set_{args.mode}_{str(args.use_chroma)}.pth')
