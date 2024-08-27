@@ -31,7 +31,7 @@ response, history = model.chat(tokenizer, 'Find the start time and end time of t
 print(response)"""
 
 if __name__ == "__main__":
-    with open('/root/autodl-tmp/HouseX-v2-doc.txt', 'r') as f:
+    with open('./v2-doc.txt', 'r') as f:
         reference = ''.join(f.readlines())
     ### print(reference)
     
