@@ -23,10 +23,12 @@ if __name__ == '__main__':
     parser.add_argument('--learning_rate', type=float, default=1e-4)
     parser.add_argument('--d_model', type=int, default=768)
     parser.add_argument('--n_head', type=int, default=3)
-    parser.add_argument('--data_mode', type=str, default='full')
     parser.add_argument('--project', type=str, default='Mainstage-v2-dataset')
-    parser.add_argument('--ckpt_dir', type=str, default='/root/autodl-tmp/checkpoints')
-    parser.add_argument('--comment_on_save', type=str, default='')
+    parser.add_argument('--ckpt_dir', type=str, default='~/checkpoints')
+    parser.add_argument('--comment', type=str, default='')
+    parser.add_argument('--use_chroma', type=bool, default=True)
+    parser.add_argument('--mode', type=str, default='full')
+    parser.add_argument('--gpu_id', type=int, default=-1)
     
     args = parser.parse_args()
     os.makedirs(args.ckpt_dir, exist_ok=True)
@@ -43,13 +45,13 @@ if __name__ == '__main__':
     model = MainstageModel(model_config)
     wb_config = deepcopy(model_config)
     wb_config.loss_weight = 'weighted' if wb_config is not None else None
-    wb_config['comment'] = 'create-dataset'
+    wb_config['comment'] = args.comment
     wb_config['batch_size'] = 4
-    wb_config['data_mode'] = args.data_mode
+    wb_config['mode'] = args.mode
     
     
-    train_set = torch.load('/root/train_set.pth')
-    val_set = torch.load('/root/test_set.pth')
+    train_set = torch.load(f'~/processed_data/train_set_{args.mode}_{str(args.use_chroma)}.pth')
+    val_set = torch.load(f'~/processed_data/test_set_{args.mode}_{str(args.use_chroma)}.pth')
     
     ### train_set, val_set = random_split(dataset, [0.8, 0.2], generator=torch_rng)
     
@@ -83,12 +85,14 @@ if __name__ == '__main__':
         logger=wandb_logger,
         log_every_n_steps=1,
         val_check_interval=0.25,
+        devices=[args.gpu_id,],
+        accelerator="gpu"
         # enable_checkpointing=False,
     )
     trainer.fit(model=model, train_dataloaders=train_loader, val_dataloaders=val_loader)
     
     model.load_from_checkpoint(checkpoint_callback.best_model_path)
-    with open(os.path.join(args.ckpt_dir, f'{args.extractor_name}-{args.transformer_num_layers}-{args.n_head}-{args.comment_on_save}.json'), 'w') as f:
+    with open(os.path.join(args.ckpt_dir, f'{args.extractor_name}-{args.transformer_num_layers}-{args.n_head}-{args.mode}-{str(args.use_chroma)}.json'), 'w') as f:
         ret = {}
         ret['train_res'] = model.train_metric_results
         ret['val_res'] = model.val_metric_results
