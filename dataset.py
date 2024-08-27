@@ -221,7 +221,7 @@ if __name__ == "__main__":
         mode=args.mode,
     )
     os.makedirs('~/processed_data', exist_ok=True)
-    train_set = MainstageDataset(data_list=train_split, use_chroma=args.use_chroma, audio_standalone_dir=f'~/raw_audio/standalone_train_{args.mode}/')
-    val_set = MainstageDataset(data_list=test_split, use_chroma=args.use_chroma, audio_standalone_dir=f'~/raw_audio/standalone_test_{args.mode}/')
-    torch.save(train_set, f'~/processed_data/train_set_{args.mode}.pth')
-    torch.save(val_set, f'~/processed_data/test_set_{args.mode}.pth')
+    train_set = MainstageDataset(data_list=train_split, use_chroma=args.use_chroma, audio_standalone_dir=f'~/raw_audio/standalone_train/')
+    val_set = MainstageDataset(data_list=test_split, use_chroma=args.use_chroma, audio_standalone_dir=f'~/raw_audio/standalone_test/')
+    torch.save(train_set, f'~/processed_data/train_set_{args.mode}_{str(args.use_chroma)}.pth')
+    torch.save(val_set, f'~/processed_data/test_set_{args.mode}_{str(args.use_chroma)}.pth')
