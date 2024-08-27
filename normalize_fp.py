@@ -36,4 +36,4 @@ def normalize_files_in_directory(directory: str, debug: bool=False):
             
             
 if __name__ == "__main__":
-    normalize_files_in_directory("/Users/ca7ax/Downloads/audio/", debug=True)
+    normalize_files_in_directory("/home/ecs-user/Downloads/audio/", debug=True)
