@@ -139,14 +139,14 @@ def create_splits(audio_dirs: List[str], split_ratio: List[float], rng_seed: int
         
     return splits
         
-class HouseXDataset(Dataset):
+class MainstageDataset(Dataset):
     def __init__(self,
         data_list: List[Tuple],
         # use_mel_spectrogram: bool=True,
         use_chroma: bool=False,
         audio_standalone_dir: str=None,
     ):
-        super(HouseXDataset, self).__init__()
+        super(MainstageDataset, self).__init__()
         
         self.track_names = []
         self._data = []
@@ -221,7 +221,7 @@ if __name__ == "__main__":
         mode=args.mode,
     )
     
-    train_set = HouseXDataset(data_list=train_split, use_chroma=args.use_chroma, audio_standalone_dir='/root/standalone_train/')
-    val_set = HouseXDataset(data_list=test_split, use_chroma=args.use_chroma, audio_standalone_dir='/root/standalone_test/')
+    train_set = MainstageDataset(data_list=train_split, use_chroma=args.use_chroma, audio_standalone_dir='/root/standalone_train/')
+    val_set = MainstageDataset(data_list=test_split, use_chroma=args.use_chroma, audio_standalone_dir='/root/standalone_test/')
     torch.save(train_set, '/root/train_set.pth')
     torch.save(val_set, '/root/test_set.pth')
