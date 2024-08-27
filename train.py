@@ -50,8 +50,8 @@ if __name__ == '__main__':
     wb_config['mode'] = args.mode
     
     
-    train_set = torch.load(f'~/processed_data/train_set_{args.mode}_{str(args.use_chroma)}.pth')
-    val_set = torch.load(f'~/processed_data/test_set_{args.mode}_{str(args.use_chroma)}.pth')
+    train_set = torch.load(f'~/processed_data/train_set_{args.mode}_{args.use_chroma}.pth')
+    val_set = torch.load(f'~/processed_data/test_set_{args.mode}_{args.use_chroma}.pth')
     
     ### train_set, val_set = random_split(dataset, [0.8, 0.2], generator=torch_rng)
     
