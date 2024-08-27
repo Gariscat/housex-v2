@@ -1,4 +1,4 @@
-# housex-v2
+# ♬ Mainstage EDM Sub-Genre Benchmark
 An extended classification benchmark for mainstream dance music in the style of house.
 
 ## Checking existing annotations
