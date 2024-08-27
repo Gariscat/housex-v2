@@ -43,11 +43,11 @@ class PositionalEncoding(nn.Module):
         return self.dropout(x)
 
 
-class HouseXModel(L.LightningModule):
+class MainstageModel(L.LightningModule):
     def __init__(self,
         model_config: edict,
     ):
-        super(HouseXModel, self).__init__()
+        super(MainstageModel, self).__init__()
         
         self.config = model_config
         if self.config.extractor_name == 'vit_b_16':
@@ -182,6 +182,6 @@ class HouseXModel(L.LightningModule):
 if __name__ == "__main__":
     for extractor_name in ['vit_b_16', 'vgg11_bn', 'resnet152', 'densenet201', 'resnext101_32x8d']:
         with open(f"misc/{extractor_name}.txt", "w") as f:
-            model = HouseXModel(extractor_name=extractor_name)
+            model = MainstageModel(extractor_name=extractor_name)
             for name, param in model.named_parameters():
                 f.write(name + ' ' + str(param.shape) + '\n')
