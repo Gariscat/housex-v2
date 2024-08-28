@@ -32,6 +32,7 @@ if __name__ == '__main__':
     parser.add_argument('--debug', default=False, action='store_true')
     
     args = parser.parse_args()
+    args.ckpt_dir = os.path.join(args.ckpt_dir, f'{args.mode}-{args.use_chroma}')
     os.makedirs(args.ckpt_dir, exist_ok=True)
     
     model_config = edict({
@@ -86,10 +87,10 @@ if __name__ == '__main__':
     
     trainer = L.Trainer(
         callbacks=[checkpoint_callback],
-        max_epochs=1,
+        max_epochs=5,
         logger=wandb_logger,
         log_every_n_steps=1,
-        val_check_interval=0.25,
+        val_check_interval=0.5,
         devices=[args.gpu_id,],
         accelerator="gpu"
         # enable_checkpointing=False,
