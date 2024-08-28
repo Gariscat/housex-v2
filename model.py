@@ -175,7 +175,10 @@ class MainstageModel(L.LightningModule):
         all_labels = torch.cat([_['label'] for _ in self.validation_step_outputs], dim=0)
         if self.config.output_embedding:
             all_embs = torch.cat([_['emb'] for _ in self.validation_step_outputs], dim=0)
-            print(all_embs.shape)
+            torch.save({
+                'emb': all_embs,
+                'label': all_labels 
+            }, '/home/xinyu.li/emb_lab.pth')
         # self.val_metric_results = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
 
         self.monitor_metric = self.monitor_metric.to(all_preds.device)

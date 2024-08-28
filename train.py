@@ -109,6 +109,15 @@ if __name__ == '__main__':
     model.config.output_embedding = True
     trainer.validate(model=model, dataloaders=val_loader)
     
+    if args.debug:
+        tensors = torch.load('/home/xinyu.li/emb_lab.pth')
+        emb, label = tensors['emb'], tensors['label']
+        print('\n\n')
+        print("###### labels-ready ######")
+        print(emb.shape, label.shape)
+        print("###### labels-ready ######")
+        print('\n\n')
+    
     ## manually calculate the results would lead to GPU memory overflow......
     
     """outputs = []
