@@ -25,7 +25,7 @@ if __name__ == '__main__':
     parser.add_argument('--n_head', type=int, default=3)
     parser.add_argument('--project', type=str, default='Mainstage-v2-dataset')
     parser.add_argument('--ckpt_dir', type=str, default='/home/xinyu.li/checkpoints')
-    parser.add_argument('--comment', type=str, default='Gentleman, this is it.')
+    parser.add_argument('--comment', type=str, default='')
     parser.add_argument('--use_chroma', default=False, action='store_true')
     parser.add_argument('--mode', type=str, default='full')
     parser.add_argument('--gpu_id', type=int, default=-1)

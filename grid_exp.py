@@ -16,7 +16,7 @@ if __name__ == '__main__':
     parser.add_argument('--use_chroma', default=False, action='store_true')
     parser.add_argument('--mode', type=str, default='full')
     parser.add_argument('--gpu_id', type=int, default=-1)
-    parser.add_argument('--comment', type=str, default='')
+    parser.add_argument('--comment', type=str, default='2nd. Gentleman, this is it.')
     args = parser.parse_args()
     
     for e, t, n in product(EXTRACTORS, T_NUM_LAYERS, N_HEADS):
