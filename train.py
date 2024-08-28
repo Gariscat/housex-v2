@@ -123,6 +123,6 @@ if __name__ == '__main__':
     
     with open(os.path.join(args.ckpt_dir, f'{args.extractor_name}-{args.transformer_num_layers}-{args.n_head}-{args.mode}-{args.use_chroma}.json'), 'w') as f:
         ret = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
+        print(ret)
         json.dump(ret, f)
-        
         print('Results saved to', f.name)

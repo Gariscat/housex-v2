@@ -422,7 +422,7 @@ def compute_metrics(predictions, targets, average='weighted'):
         'precision': precision,
         'recall': recall,
         'f1_score': f1,
-        'confusion_matrix': cm
+        'confusion_matrix': cm.tolist()
     }
 
 
