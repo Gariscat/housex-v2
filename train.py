@@ -108,6 +108,8 @@ if __name__ == '__main__':
     
     outputs = []
     for x, y in val_loader:
+        x = x.to(f'cuda:{args.gpu_id}')
+        y = y.to(f'cuda:{args.gpu_id}')
         y_hat = model(x)
         
         y_sharpened = sharpen_label(y)
