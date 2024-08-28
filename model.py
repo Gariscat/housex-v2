@@ -47,7 +47,7 @@ class MainstageModel(L.LightningModule):
     def __init__(self,
         model_config: edict,
     ):
-        super(MainstageModel, self).__init__()
+        super().__init__()
         
         self.config = model_config
         if self.config.extractor_name == 'vit_b_16':

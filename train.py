@@ -24,11 +24,12 @@ if __name__ == '__main__':
     parser.add_argument('--d_model', type=int, default=768)
     parser.add_argument('--n_head', type=int, default=3)
     parser.add_argument('--project', type=str, default='Mainstage-v2-dataset')
-    parser.add_argument('--ckpt_dir', type=str, default='~/checkpoints')
-    parser.add_argument('--comment', type=str, default='')
+    parser.add_argument('--ckpt_dir', type=str, default='/home/xinyu.li/checkpoints')
+    parser.add_argument('--comment', type=str, default='Gentleman, this is it.')
     parser.add_argument('--use_chroma', default=False, action='store_true')
     parser.add_argument('--mode', type=str, default='full')
     parser.add_argument('--gpu_id', type=int, default=-1)
+    parser.add_argument('--debug', default=False, action='store_true')
     
     args = parser.parse_args()
     os.makedirs(args.ckpt_dir, exist_ok=True)
@@ -48,10 +49,14 @@ if __name__ == '__main__':
     wb_config['comment'] = args.comment
     wb_config['batch_size'] = 4
     wb_config['mode'] = args.mode
+    wb_config['use_chroma'] = args.use_chroma
     
     
-    train_set = torch.load(f'~/processed_data/train_set_{args.mode}_{args.use_chroma}.pth')
-    val_set = torch.load(f'~/processed_data/test_set_{args.mode}_{args.use_chroma}.pth')
+    train_set = torch.load(f'/home/xinyu.li/train_set_{args.mode}_{args.use_chroma}.pth')
+    val_set = torch.load(f'/home/xinyu.li/test_set_{args.mode}_{args.use_chroma}.pth')
+    if args.debug:
+        train_set = train_set[:20]
+        val_set = val_set[:10]
     
     ### train_set, val_set = random_split(dataset, [0.8, 0.2], generator=torch_rng)
     
@@ -68,7 +73,7 @@ if __name__ == '__main__':
     wandb_logger = WandbLogger(
         project=args.project,
         config=wb_config,
-        save_dir='/root'
+        save_dir='/home/xinyu.li/'
     )
     
     checkpoint_callback = ModelCheckpoint(
@@ -81,7 +86,7 @@ if __name__ == '__main__':
     
     trainer = L.Trainer(
         callbacks=[checkpoint_callback],
-        max_epochs=10,
+        max_epochs=1,
         logger=wandb_logger,
         log_every_n_steps=1,
         val_check_interval=0.25,
@@ -91,7 +96,10 @@ if __name__ == '__main__':
     )
     trainer.fit(model=model, train_dataloaders=train_loader, val_dataloaders=val_loader)
     
-    model.load_from_checkpoint(checkpoint_callback.best_model_path)
+    # model = MainstageModel.__init__(model_config).load_from_checkpoint(checkpoint_callback.best_model_path)
+    model = MainstageModel.load_from_checkpoint(checkpoint_callback.best_model_path, model_config=model_config)
+    print("Best ckpt reloaded.")
+    model.eval()
     with open(os.path.join(args.ckpt_dir, f'{args.extractor_name}-{args.transformer_num_layers}-{args.n_head}-{args.mode}-{str(args.use_chroma)}.json'), 'w') as f:
         ret = {}
         ret['train_res'] = model.train_metric_results
