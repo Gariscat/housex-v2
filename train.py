@@ -46,6 +46,7 @@ if __name__ == '__main__':
         'n_head': args.n_head,
     })"""
     model_config = edict(vars(args))
+    model_config['output_embedding'] = False # training time
     
     model = MainstageModel(model_config)
     wb_config = deepcopy(model_config)
@@ -105,6 +106,7 @@ if __name__ == '__main__':
     print("Best ckpt reloaded.")
     model.eval()
     
+    model.config.output_embedding = True
     trainer.validate(model=model, dataloaders=val_loader)
     
     ## manually calculate the results would lead to GPU memory overflow......

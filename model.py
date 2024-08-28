@@ -96,7 +96,7 @@ class MainstageModel(L.LightningModule):
         self.train_metric_results = None
         self.val_metric_results = None
         
-    def forward(self, x, output_embed: bool=False):
+    def forward(self, x):
         b, c, h, w = x.shape
         assert h == N_MELS
         
@@ -113,14 +113,17 @@ class MainstageModel(L.LightningModule):
         out_emb = self.encoder(embedding)[0] # (0, d)
         out = nn.ReLU()(out_emb)
         out = self.fc(out)
-        if output_embed:
+        if self.config.output_embedding:
             return out, out_emb
         else:
             return out
         
     def training_step(self, batch, batch_idx):
         x, y = batch
-        y_hat = self(x, output_embed=False)
+        if self.config.output_embedding:
+            y_hat, _ = self(x)
+        else:
+            y_hat = self(x)
         if self.config.loss_weight is not None:
             self.config.loss_weight = self.config.loss_weight.to(x.device)
         loss = nn.CrossEntropyLoss(weight=self.config.loss_weight)(y_hat, y)
@@ -136,7 +139,11 @@ class MainstageModel(L.LightningModule):
     
     def validation_step(self, batch, batch_idx):
         x, y = batch
-        y_hat = self(x, output_embed=False)
+        emb = None
+        if self.config.output_embedding:
+            y_hat, emb = self(x)
+        else:
+            y_hat = self(x)
         if self.config.loss_weight is not None:
             self.config.loss_weight = self.config.loss_weight.to(x.device)
         loss = nn.CrossEntropyLoss(weight=self.config.loss_weight)(y_hat, y)
@@ -145,7 +152,8 @@ class MainstageModel(L.LightningModule):
         y_sharpened = sharpen_label(y)
         self.validation_step_outputs.append({
             'pred': y_hat.argmax(-1),
-            'label': y_sharpened.argmax(-1)
+            'label': y_sharpened.argmax(-1),
+            'emb': emb
         })
         
         return loss
@@ -165,7 +173,9 @@ class MainstageModel(L.LightningModule):
     def on_validation_epoch_end(self):
         all_preds = torch.cat([_['pred'] for _ in self.validation_step_outputs], dim=0)
         all_labels = torch.cat([_['label'] for _ in self.validation_step_outputs], dim=0)
-        
+        if self.config.output_embedding:
+            all_embs = torch.cat([_['emb'] for _ in self.validation_step_outputs], dim=0)
+            print(all_embs.shape)
         # self.val_metric_results = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
 
         self.monitor_metric = self.monitor_metric.to(all_preds.device)
@@ -177,7 +187,7 @@ class MainstageModel(L.LightningModule):
         with open(os.path.join(self.config.ckpt_dir, \
                 f'{self.config.extractor_name}-{self.config.transformer_num_layers}-{self.config.n_head}-{self.config.mode}-{self.config.use_chroma}.json'), 'w') as f:
             ret = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
-            print(ret)
+            # print(ret)
             for k, v in ret.items():
                 if k == 'confusion_matrix':
                     continue
