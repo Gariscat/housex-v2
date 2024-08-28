@@ -11,6 +11,7 @@ from argparse import ArgumentParser
 from lightning.pytorch.callbacks import ModelCheckpoint
 import os
 import json
+from utils import sharpen_label, compute_metrics
 
 torch_rng = torch.Generator().manual_seed(42)
 torch.set_float32_matmul_precision('high')
@@ -101,10 +102,25 @@ if __name__ == '__main__':
     model = MainstageModel.load_from_checkpoint(checkpoint_callback.best_model_path, model_config=model_config)
     print("Best ckpt reloaded.")
     model.eval()
-    with open(os.path.join(args.ckpt_dir, f'{args.extractor_name}-{args.transformer_num_layers}-{args.n_head}-{args.mode}-{str(args.use_chroma)}.json'), 'w') as f:
-        ret = {}
-        ret['train_res'] = model.train_metric_results
-        ret['val_res'] = model.val_metric_results
+    
+    
+    ## manually calculate the results
+    
+    outputs = []
+    for x, y in val_loader:
+        y_hat = model(x)
+        
+        y_sharpened = sharpen_label(y)
+        outputs.append({
+            'pred': y_hat.argmax(-1),
+            'label': y_sharpened.argmax(-1)
+        })
+        
+    all_preds = torch.cat([_['pred'] for _ in outputs], dim=0)
+    all_labels = torch.cat([_['label'] for _ in outputs], dim=0)
+    
+    with open(os.path.join(args.ckpt_dir, f'{args.extractor_name}-{args.transformer_num_layers}-{args.n_head}-{args.mode}-{args.use_chroma}.json'), 'w') as f:
+        ret = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
         json.dump(ret, f)
         
         print('Results saved to', f.name)

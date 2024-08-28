@@ -151,24 +151,24 @@ class MainstageModel(L.LightningModule):
         all_preds = torch.cat([_['pred'] for _ in self.train_step_outputs], dim=0)
         all_labels = torch.cat([_['label'] for _ in self.train_step_outputs], dim=0)
         
-        self.train_metric_results = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
+        # self.train_metric_results = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
         
         self.monitor_metric = self.monitor_metric.to(all_preds.device)
         acc = self.monitor_metric(all_preds, all_labels).item()
         self.log("train_acc", acc)
-        print('train_acc', acc)
+        # print('train_acc', acc)
         self.train_step_outputs.clear()  # free memory
     
     def on_validation_epoch_end(self):
         all_preds = torch.cat([_['pred'] for _ in self.validation_step_outputs], dim=0)
         all_labels = torch.cat([_['label'] for _ in self.validation_step_outputs], dim=0)
         
-        self.val_metric_results = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
-        
+        # self.val_metric_results = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
+
         self.monitor_metric = self.monitor_metric.to(all_preds.device)
         acc = self.monitor_metric(all_preds, all_labels).item()
         self.log("val_acc", acc)
-        print('val_acc', acc)
+        # print('val_acc', acc)
         self.validation_step_outputs.clear()  # free memory
     
     def configure_optimizers(self):
