@@ -19,7 +19,8 @@ from easydict import EasyDict as edict
 import math
 import torchmetrics
 from utils import sharpen_label, compute_metrics
-
+import os
+import json
 
 class PositionalEncoding(nn.Module):
 
@@ -95,7 +96,7 @@ class MainstageModel(L.LightningModule):
         self.train_metric_results = None
         self.val_metric_results = None
         
-    def forward(self, x):
+    def forward(self, x, output_embed: bool=False):
         b, c, h, w = x.shape
         assert h == N_MELS
         
@@ -109,15 +110,17 @@ class MainstageModel(L.LightningModule):
             features.append(y)
             
         embedding = torch.stack(features) # (n, b, d)
-        out = self.encoder(embedding)[0] # (0, d)
-        out = nn.ReLU()(out)
+        out_emb = self.encoder(embedding)[0] # (0, d)
+        out = nn.ReLU()(out_emb)
         out = self.fc(out)
-        
-        return out
+        if output_embed:
+            return out, out_emb
+        else:
+            return out
         
     def training_step(self, batch, batch_idx):
         x, y = batch
-        y_hat = self(x)
+        y_hat = self(x, output_embed=False)
         if self.config.loss_weight is not None:
             self.config.loss_weight = self.config.loss_weight.to(x.device)
         loss = nn.CrossEntropyLoss(weight=self.config.loss_weight)(y_hat, y)
@@ -133,7 +136,7 @@ class MainstageModel(L.LightningModule):
     
     def validation_step(self, batch, batch_idx):
         x, y = batch
-        y_hat = self(x)
+        y_hat = self(x, output_embed=False)
         if self.config.loss_weight is not None:
             self.config.loss_weight = self.config.loss_weight.to(x.device)
         loss = nn.CrossEntropyLoss(weight=self.config.loss_weight)(y_hat, y)
@@ -170,6 +173,17 @@ class MainstageModel(L.LightningModule):
         self.log("val_acc", acc)
         # print('val_acc', acc)
         self.validation_step_outputs.clear()  # free memory
+        
+        with open(os.path.join(self.config.ckpt_dir, \
+                f'{self.config.extractor_name}-{self.config.transformer_num_layers}-{self.config.n_head}-{self.config.mode}-{self.config.use_chroma}.json'), 'w') as f:
+            ret = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
+            print(ret)
+            for k, v in ret.items():
+                if k == 'confusion_matrix':
+                    continue
+                self.log(f"val_{k}", v)
+            json.dump(ret, f)
+            print('Results saved to', f.name)
     
     def configure_optimizers(self):
         optimizer = optim.Adam(self.parameters(), lr=self.config.learning_rate)

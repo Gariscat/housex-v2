@@ -13,6 +13,7 @@ import os
 import json
 from utils import sharpen_label, compute_metrics
 
+# os.environ['WANDB_MODE'] = 'offline'
 torch_rng = torch.Generator().manual_seed(42)
 torch.set_float32_matmul_precision('high')
 
@@ -36,14 +37,15 @@ if __name__ == '__main__':
     args.ckpt_dir = os.path.join(args.ckpt_dir, f'{args.mode}-{args.use_chroma}')
     os.makedirs(args.ckpt_dir, exist_ok=True)
     
-    model_config = edict({
+    """model_config = edict({
         'extractor_name': args.extractor_name,
         'transformer_num_layers': args.transformer_num_layers,
         'loss_weight': args.loss_weight,
         'learning_rate': args.learning_rate,
         'd_model': args.d_model,
         'n_head': args.n_head,
-    })
+    })"""
+    model_config = edict(vars(args))
     
     model = MainstageModel(model_config)
     wb_config = deepcopy(model_config)
@@ -57,8 +59,8 @@ if __name__ == '__main__':
     train_set = torch.load(f'/home/xinyu.li/train_set_{args.mode}_{args.use_chroma}.pth')
     val_set = torch.load(f'/home/xinyu.li/test_set_{args.mode}_{args.use_chroma}.pth')
     if args.debug:
-        train_set = train_set[:20]
-        val_set = val_set[:10]
+        train_set = train_set[:100]
+        val_set = val_set[:20]
     
     ### train_set, val_set = random_split(dataset, [0.8, 0.2], generator=torch_rng)
     
@@ -88,7 +90,7 @@ if __name__ == '__main__':
     
     trainer = L.Trainer(
         callbacks=[checkpoint_callback],
-        max_epochs=5,
+        max_epochs=1 if args.debug else 5,
         logger=wandb_logger,
         log_every_n_steps=1,
         val_check_interval=0.5,
@@ -103,10 +105,11 @@ if __name__ == '__main__':
     print("Best ckpt reloaded.")
     model.eval()
     
+    trainer.validate(model=model, dataloaders=val_loader)
     
-    ## manually calculate the results
+    ## manually calculate the results would lead to GPU memory overflow......
     
-    outputs = []
+    """outputs = []
     for x, y in val_loader:
         x = x.to(f'cuda:{args.gpu_id}')
         y = y.to(f'cuda:{args.gpu_id}')
@@ -125,4 +128,4 @@ if __name__ == '__main__':
         ret = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
         print(ret)
         json.dump(ret, f)
-        print('Results saved to', f.name)
+        print('Results saved to', f.name)"""
