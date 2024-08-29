@@ -178,7 +178,8 @@ class MainstageModel(L.LightningModule):
             torch.save({
                 'emb': all_embs,
                 'label': all_labels 
-            }, '/home/xinyu.li/emb_lab.pth')
+            }, '/home/xinyu.li/my_emb_lab.pth')
+            return
         # self.val_metric_results = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
 
         self.monitor_metric = self.monitor_metric.to(all_preds.device)
