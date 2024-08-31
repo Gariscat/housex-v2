@@ -1,0 +1,5 @@
+1. The first three columns (xxx. Inst.) indicate whether the track specifically assigns instruments for the parts respectively. For example, some future house tracks do not use chord instruments since their lead sounds can cover the mid frequencies.
+2. Groove measures the energy fluctuation of the instrumental part (no percussion) within a beat, from 1 (very present, extremely short attack) to 5 (highly-sidechained).
+3. Rhythm discusses how fragmented/off-beat the notes are. We consider the length of notes played by instruments used in the track. 1 means extremely coarse (mainly 1/4 notes and 1/8 notes) and 5 means extremely fine (1/32 notes exist).
+4. Distortion describes the extent to which the track uses "dirty" and "inharmonic" sounds/effects, such as clipping, flanging, etc. 1 is very clean (hardly any noticeable distortion) and 5 is very harsh (almost distortion in every bar).
+5. Organicity measures the extent to which the track uses organic instruments like acoustic piano/guitar/strings, etc.
