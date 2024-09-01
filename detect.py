@@ -13,10 +13,10 @@ import subprocess
 audio_dir = ''
     
 if __name__ == "__main__":
-    # ret = find_drop("/Users/ca7ax/Downloads/audio/Nothing To Hide - PeTE _ Trevor Omoto _ Peter Pentsak.ogg", True)
+    # ret = find_drop("/Users/admin/Downloads/audio/Nothing To Hide - PeTE _ Trevor Omoto _ Peter Pentsak.ogg", True)
     # print(ret)
-    # find_drop("/Users/ca7ax/Downloads/Martin Garrix - Now That I've Found You (feat. John & Michel) [Official Video].mp3")
-    # find_drop("/Users/ca7ax/Downloads/Martin Garrix & Third Party - Lions In The Wild [Official Video].mp3")
+    # find_drop("/Users/admin/Downloads/Martin Garrix - Now That I've Found You (feat. John & Michel) [Official Video].mp3")
+    # find_drop("/Users/admin/Downloads/Martin Garrix & Third Party - Lions In The Wild [Official Video].mp3")
     drop_annotations = []
     
     detected = 0

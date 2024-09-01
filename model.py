@@ -19,8 +19,7 @@ from easydict import EasyDict as edict
 import math
 import torchmetrics
 from utils import sharpen_label, compute_metrics
-import os
-import json
+
 
 class PositionalEncoding(nn.Module):
 
@@ -110,20 +109,15 @@ class MainstageModel(L.LightningModule):
             features.append(y)
             
         embedding = torch.stack(features) # (n, b, d)
-        out_emb = self.encoder(embedding)[0] # (0, d)
-        out = nn.ReLU()(out_emb)
+        out = self.encoder(embedding)[0] # (0, d)
+        out = nn.ReLU()(out)
         out = self.fc(out)
-        if self.config.output_embedding:
-            return out, out_emb
-        else:
-            return out
+        
+        return out
         
     def training_step(self, batch, batch_idx):
         x, y = batch
-        if self.config.output_embedding:
-            y_hat, _ = self(x)
-        else:
-            y_hat = self(x)
+        y_hat = self(x)
         if self.config.loss_weight is not None:
             self.config.loss_weight = self.config.loss_weight.to(x.device)
         loss = nn.CrossEntropyLoss(weight=self.config.loss_weight)(y_hat, y)
@@ -139,11 +133,7 @@ class MainstageModel(L.LightningModule):
     
     def validation_step(self, batch, batch_idx):
         x, y = batch
-        emb = None
-        if self.config.output_embedding:
-            y_hat, emb = self(x)
-        else:
-            y_hat = self(x)
+        y_hat = self(x)
         if self.config.loss_weight is not None:
             self.config.loss_weight = self.config.loss_weight.to(x.device)
         loss = nn.CrossEntropyLoss(weight=self.config.loss_weight)(y_hat, y)
@@ -152,8 +142,7 @@ class MainstageModel(L.LightningModule):
         y_sharpened = sharpen_label(y)
         self.validation_step_outputs.append({
             'pred': y_hat.argmax(-1),
-            'label': y_sharpened.argmax(-1),
-            'emb': emb
+            'label': y_sharpened.argmax(-1)
         })
         
         return loss
@@ -162,42 +151,25 @@ class MainstageModel(L.LightningModule):
         all_preds = torch.cat([_['pred'] for _ in self.train_step_outputs], dim=0)
         all_labels = torch.cat([_['label'] for _ in self.train_step_outputs], dim=0)
         
-        # self.train_metric_results = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
+        self.train_metric_results = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
         
         self.monitor_metric = self.monitor_metric.to(all_preds.device)
         acc = self.monitor_metric(all_preds, all_labels).item()
         self.log("train_acc", acc)
-        # print('train_acc', acc)
+        print('train_acc', acc)
         self.train_step_outputs.clear()  # free memory
     
     def on_validation_epoch_end(self):
         all_preds = torch.cat([_['pred'] for _ in self.validation_step_outputs], dim=0)
         all_labels = torch.cat([_['label'] for _ in self.validation_step_outputs], dim=0)
-        if self.config.output_embedding:
-            all_embs = torch.cat([_['emb'] for _ in self.validation_step_outputs], dim=0)
-            torch.save({
-                'emb': all_embs,
-                'label': all_labels 
-            }, '/home/xinyu.li/my_emb_lab.pth')
-            return
-        # self.val_metric_results = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
-
+        
+        self.val_metric_results = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
+        
         self.monitor_metric = self.monitor_metric.to(all_preds.device)
         acc = self.monitor_metric(all_preds, all_labels).item()
         self.log("val_acc", acc)
-        # print('val_acc', acc)
+        print('val_acc', acc)
         self.validation_step_outputs.clear()  # free memory
-        
-        with open(os.path.join(self.config.ckpt_dir, \
-                f'{self.config.extractor_name}-{self.config.transformer_num_layers}-{self.config.n_head}-{self.config.mode}-{self.config.use_chroma}.json'), 'w') as f:
-            ret = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
-            # print(ret)
-            for k, v in ret.items():
-                if k == 'confusion_matrix':
-                    continue
-                self.log(f"val_{k}", v)
-            json.dump(ret, f)
-            print('Results saved to', f.name)
     
     def configure_optimizers(self):
         optimizer = optim.Adam(self.parameters(), lr=self.config.learning_rate)

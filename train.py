@@ -11,9 +11,7 @@ from argparse import ArgumentParser
 from lightning.pytorch.callbacks import ModelCheckpoint
 import os
 import json
-from utils import sharpen_label, compute_metrics
 
-# os.environ['WANDB_MODE'] = 'offline'
 torch_rng = torch.Generator().manual_seed(42)
 torch.set_float32_matmul_precision('high')
 
@@ -26,7 +24,7 @@ if __name__ == '__main__':
     parser.add_argument('--d_model', type=int, default=768)
     parser.add_argument('--n_head', type=int, default=3)
     parser.add_argument('--project', type=str, default='Mainstage-v2-dataset')
-    parser.add_argument('--ckpt_dir', type=str, default='/home/xinyu.li/checkpoints')
+    parser.add_argument('--ckpt_dir', type=str, default='/home/admin/checkpoints')
     parser.add_argument('--comment', type=str, default='')
     parser.add_argument('--use_chroma', default=False, action='store_true')
     parser.add_argument('--mode', type=str, default='full')
@@ -34,19 +32,16 @@ if __name__ == '__main__':
     parser.add_argument('--debug', default=False, action='store_true')
     
     args = parser.parse_args()
-    args.ckpt_dir = os.path.join(args.ckpt_dir, f'{args.mode}-{args.use_chroma}')
     os.makedirs(args.ckpt_dir, exist_ok=True)
     
-    """model_config = edict({
+    model_config = edict({
         'extractor_name': args.extractor_name,
         'transformer_num_layers': args.transformer_num_layers,
         'loss_weight': args.loss_weight,
         'learning_rate': args.learning_rate,
         'd_model': args.d_model,
         'n_head': args.n_head,
-    })"""
-    model_config = edict(vars(args))
-    model_config['output_embedding'] = False # training time
+    })
     
     model = MainstageModel(model_config)
     wb_config = deepcopy(model_config)
@@ -57,11 +52,11 @@ if __name__ == '__main__':
     wb_config['use_chroma'] = args.use_chroma
     
     
-    train_set = torch.load(f'/home/xinyu.li/train_set_{args.mode}_{args.use_chroma}.pth')
-    val_set = torch.load(f'/home/xinyu.li/test_set_{args.mode}_{args.use_chroma}.pth')
+    train_set = torch.load(f'/home/admin/train_set_{args.mode}_{args.use_chroma}.pth')
+    val_set = torch.load(f'/home/admin/test_set_{args.mode}_{args.use_chroma}.pth')
     if args.debug:
-        train_set = train_set[:100]
-        val_set = val_set[:20]
+        train_set = train_set[:20]
+        val_set = val_set[:10]
     
     ### train_set, val_set = random_split(dataset, [0.8, 0.2], generator=torch_rng)
     
@@ -78,7 +73,7 @@ if __name__ == '__main__':
     wandb_logger = WandbLogger(
         project=args.project,
         config=wb_config,
-        save_dir='/home/xinyu.li/'
+        save_dir='/home/admin/'
     )
     
     checkpoint_callback = ModelCheckpoint(
@@ -91,10 +86,10 @@ if __name__ == '__main__':
     
     trainer = L.Trainer(
         callbacks=[checkpoint_callback],
-        max_epochs=1 if args.debug else 5,
+        max_epochs=1,
         logger=wandb_logger,
         log_every_n_steps=1,
-        val_check_interval=0.5,
+        val_check_interval=0.25,
         devices=[args.gpu_id,],
         accelerator="gpu"
         # enable_checkpointing=False,
@@ -105,38 +100,10 @@ if __name__ == '__main__':
     model = MainstageModel.load_from_checkpoint(checkpoint_callback.best_model_path, model_config=model_config)
     print("Best ckpt reloaded.")
     model.eval()
-    
-    model.config.output_embedding = True
-    trainer.validate(model=model, dataloaders=val_loader)
-    
-    if args.debug:
-        tensors = torch.load('/home/xinyu.li/emb_lab.pth')
-        emb, label = tensors['emb'], tensors['label']
-        print('\n\n')
-        print("###### labels-ready ######")
-        print(emb.shape, label.shape)
-        print("###### labels-ready ######")
-        print('\n\n')
-    
-    ## manually calculate the results would lead to GPU memory overflow......
-    
-    """outputs = []
-    for x, y in val_loader:
-        x = x.to(f'cuda:{args.gpu_id}')
-        y = y.to(f'cuda:{args.gpu_id}')
-        y_hat = model(x)
-        
-        y_sharpened = sharpen_label(y)
-        outputs.append({
-            'pred': y_hat.argmax(-1),
-            'label': y_sharpened.argmax(-1)
-        })
-        
-    all_preds = torch.cat([_['pred'] for _ in outputs], dim=0)
-    all_labels = torch.cat([_['label'] for _ in outputs], dim=0)
-    
-    with open(os.path.join(args.ckpt_dir, f'{args.extractor_name}-{args.transformer_num_layers}-{args.n_head}-{args.mode}-{args.use_chroma}.json'), 'w') as f:
-        ret = compute_metrics(all_preds.cpu().numpy(), all_labels.cpu().numpy())
-        print(ret)
+    with open(os.path.join(args.ckpt_dir, f'{args.extractor_name}-{args.transformer_num_layers}-{args.n_head}-{args.mode}-{str(args.use_chroma)}.json'), 'w') as f:
+        ret = {}
+        ret['train_res'] = model.train_metric_results
+        ret['val_res'] = model.val_metric_results
         json.dump(ret, f)
-        print('Results saved to', f.name)"""
+        
+        print('Results saved to', f.name)

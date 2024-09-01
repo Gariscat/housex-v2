@@ -165,5 +165,3 @@ cython_debug/
 lightning_logs/
 wandb/
 housex-v2/
-
-*.png

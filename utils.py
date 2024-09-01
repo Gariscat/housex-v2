@@ -422,18 +422,18 @@ def compute_metrics(predictions, targets, average='weighted'):
         'precision': precision,
         'recall': recall,
         'f1_score': f1,
-        'confusion_matrix': cm.tolist()
+        'confusion_matrix': cm
     }
 
 
 if __name__ == '__main__':
     # This part is a showcase for the UI for reading annotations
-    """ap = "/Users/ca7ax/Downloads/audio-100-test/Where You Wanna Be - R3HAB _ Elena Temnikova.ogg"
+    """ap = "/Users/admin/Downloads/audio-100-test/Where You Wanna Be - R3HAB _ Elena Temnikova.ogg"
     AudioPlayer(ap)"""
     
     """check_annotations(
-        anno_path="/Users/ca7ax/Downloads/project-4-at-2024-07-03-13-33-8a6c2a33.csv",
-        audio_dir="/Users/ca7ax/Library/Application Support/label-studio/media/upload/4"
+        anno_path="/Users/admin/Downloads/project-4-at-2024-07-03-13-33-8a6c2a33.csv",
+        audio_dir="/Users/admin/Library/Application Support/label-studio/media/upload/4"
     )"""
     # This part acts as a process to find the drop of a given track.
     # The reason why we do not call find_drop multiple times in detect.py
