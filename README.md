@@ -1,4 +1,4 @@
-# ♬ Mainstage EDM Sub-Genre Benchmark
+# 🔥 Mainstage EDM Sub-Genre Benchmark 🔥
 An extended classification benchmark for mainstream dance music in the style of house, covering progressive house, future house, bass house, tech house, deep house, bigroom, future rave and slap house.
 
 ## Collection
