@@ -5,6 +5,8 @@ An extended classification benchmark for mainstream dance music in the style of 
 
 Our dataset contains 1035 tracks. You can download it from [Google Drive](https://drive.google.com/drive/folders/12VNfriD5d6aUGN5w-LVKxT0Gsqe7RpEL?usp=sharing). We split them into 3 parts due to the file upload limit in ```Label-Studio``` and that the data is labeled by multiple experts. These 3 parts are **not** 3 folds of the dataset in the sense of train/val/test. The splits are created after loading all the tracks from the folders.
 
+P.S. The ```annotations``` folder is deprecated. We keep annotations together with audio files in standlone directories.
+
 ## Annotation
 
 Annotation is done using ```Label-Studio``` (MANY thanks to the developers!). We use soft labeling such that the probabilities of each sub-genre should sum up to 1.
