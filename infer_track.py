@@ -16,6 +16,7 @@ import librosa
 import numpy as np
 from config import ALL_GENRES, NUM_SECONDS_PER_CLIP
 from pprint import pprint
+from datetime import timedelta
 
 torch_rng = torch.Generator().manual_seed(42)
 torch.set_float32_matmul_precision('high')
@@ -32,7 +33,7 @@ if __name__ == '__main__':
     parser.add_argument('--mode', type=str, default='full')
     parser.add_argument('--gpu_id', type=int, default=0)
     parser.add_argument('--debug', default=False, action='store_true')
-    parser.add_argument('--ckpt_path', type=str, default='/home/xinyu.li/checkpoints/full-True/resnet152-1-6.ckpt')
+    parser.add_argument('--ckpt_path', type=str, default='/root/resnet152-1-6.ckpt')
     parser.add_argument('--track_path', type=str)
     
     args = parser.parse_args()
@@ -47,32 +48,34 @@ if __name__ == '__main__':
     })
     model = MainstageModel(model_config)
     model = MainstageModel.load_from_checkpoint(args.ckpt_path, model_config=model_config)
-    ### train_set, val_set = random_split(dataset, [0.8, 0.2], generator=torch_rng)
+    
     model.eval()
     model.to(f'cuda:{args.gpu_id}' if args.gpu_id >= 0 else 'cpu')
+    model.config.output_embedding = False
     
     y_track, sr = librosa.load(args.track_path, mono=True)
-    drop_sections = find_drop(args.track_path, write_to_tmp=False)
+    drop_sections = find_drop(args.track_path, write_to_tmp=False)['drop_sections']
     num_sample_per_clip = int(NUM_SECONDS_PER_CLIP * sr)
+    print(drop_sections)
     
     for drop_section in drop_sections:
         drop_st_sample = librosa.time_to_samples(drop_section[0], sr=sr)
         drop_ed_sample = librosa.time_to_samples(drop_section[1], sr=sr)
         
         for cur_sample in np.linspace(drop_st_sample, drop_ed_sample - num_sample_per_clip, 4, dtype=int):
-            clip_st_sample = drop_st_sample
+            clip_st_sample = cur_sample
             clip_ed_sample = clip_st_sample + num_sample_per_clip
             y_clip = y_track[clip_st_sample:clip_ed_sample]
             feat = get_gram(y_clip, sr, args.use_chroma)
             feat = feat.unsqueeze(0).to(f'cuda:{args.gpu_id}' if args.gpu_id >= 0 else 'cpu')
             
             logits = model(feat).detach().cpu()
-            probs = torch.softmax(logits).flatten().numpy().tolist()
+            probs = torch.softmax(logits, dim=-1).flatten().numpy()
             ret = {
-                "Audio path:": args.audio_path,
+                "Audio path:": args.track_path,
                 "st_sec:": librosa.samples_to_time(clip_st_sample, sr=sr),
                 "ed_sec": librosa.samples_to_time(clip_ed_sample, sr=sr),
-                "Probs:": probs,
-                "Prediction:": ALL_GENRES[probs.argmax().item()]
+                "Probs:": probs.tolist(),
+                "Prediction:": ALL_GENRES[probs.argmax()]
             }
             pprint(ret)
