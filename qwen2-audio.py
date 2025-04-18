@@ -1,4 +1,4 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import Qwen2AudioForConditionalGeneration, AutoProcessor
 from transformers.generation import GenerationConfig
 import torch
 from utils import read_audio_st_ed, compute_metrics
@@ -7,20 +7,14 @@ from tqdm import tqdm
 import numpy as np
 import re
 import random
+import librosa
 
 torch.manual_seed(42)
 
 # Note: The default behavior now has injection attack prevention off.
-tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-Audio-Chat", trust_remote_code=True)
+processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B-Instruct")
 
-# use bf16
-# model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-Audio-Chat", device_map="auto", trust_remote_code=True, bf16=True).eval()
-# use fp16
-# model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-Audio-Chat", device_map="auto", trust_remote_code=True, fp16=True).eval()
-# use cpu only
-# model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-Audio-Chat", device_map="cpu", trust_remote_code=True).eval()
-# use cuda device
-model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-Audio-Chat", device_map="cuda", trust_remote_code=True).eval()
+model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B-Instruct", device_map="cuda").eval()
 
 """print(response)
 # The person says: "mister quilter is the apostle of the middle classes and we are glad to welcome his gospel".
@@ -48,10 +42,11 @@ if __name__ == "__main__":
     for clip_info in tqdm(clip_info_list):
         track_name = os.path.basename(clip_info["track_path"])
         track_abs_path = os.path.join(clip_info_dir, track_name)
-        query = tokenizer.from_list_format([
-            {'audio': track_abs_path}, # Either a local path or an url
-            {'text':
-                f'From the perspective of an EDM producer, \
+        conversation = [
+            {'role': 'system', 'content': 'You are a helpful assistant.'}, 
+            {"role": "user", "content": [
+                {"type": "audio", "audio_url": track_abs_path},
+                {"type": "text", "text": f'From the perspective of an EDM producer, \
                 we have some background knowledge for house music classification as references. \
                 {reference} \
                 What is the genre of this song? Answer to the best of your knowledge. \
@@ -65,8 +60,19 @@ if __name__ == "__main__":
                 7. future rave\n\
                 8. slap house/Brazilian bass\n. \
                 Do not include any other information in your answer.'},
-        ])
-        response, history = model.chat(tokenizer, query=query, history=None)
+            ]},
+        ]
+        text = processor.apply_chat_template(conversation, add_generation_prompt=True, tokenize=False)
+        audios = [librosa.load(track_abs_path, sr=processor.feature_extractor.sampling_rate)[0],]
+        inputs = processor(text=text, audios=audios, return_tensors="pt", padding=True)
+        inputs["input_ids"] = inputs["input_ids"].to("cuda")
+        inputs.input_ids = inputs.input_ids.to("cuda")
+        
+        generate_ids = model.generate(**inputs, max_length=2048)
+        generate_ids = generate_ids[:, inputs.input_ids.size(1):]
+
+        response = processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
+        print(response)
         
         pred_id = -1
         if len(re.findall(r'\d+', response)) > 0:  # the model gives a number
@@ -89,7 +95,7 @@ if __name__ == "__main__":
         accurate_cnt += int(pred_id == np.argmax(label))
         # print(label, response)
         all_preds += [pred_id]
-        all_labels += [np.argmax(label)]   
+        all_labels += [np.argmax(label)]        
     
     accuracy = accurate_cnt / len(clip_info_list)
     intersect_rate = intersect_cnt / len(clip_info_list)
