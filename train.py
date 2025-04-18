@@ -57,8 +57,8 @@ if __name__ == '__main__':
     wb_config['use_chroma'] = args.use_chroma
     
     
-    train_set = torch.load(f'/home/xinyu.li/train_set_{args.mode}_{args.use_chroma}.pth')
-    val_set = torch.load(f'/home/xinyu.li/test_set_{args.mode}_{args.use_chroma}.pth')
+    train_set = torch.load(f'/home/xinyu.li/processed_data/train_set_{args.mode}_{args.use_chroma}.pth')
+    val_set = torch.load(f'/home/xinyu.li/processed_data/test_set_{args.mode}_{args.use_chroma}.pth')
     if args.debug:
         train_set = train_set[:100]
         val_set = val_set[:20]

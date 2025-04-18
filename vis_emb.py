@@ -17,8 +17,11 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 import umap
 from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.lines as mlines
 
+S = 0.05
 
+'''
 def visualize_embeddings_pca(embeddings, labels, class_names, n_components=2, save_path='pca_plot.png'):
     """
     Visualize the latent embeddings using PCA and save the plot to the specified path.
@@ -48,12 +51,12 @@ def visualize_embeddings_pca(embeddings, labels, class_names, n_components=2, sa
     # Plotting PCA
     plt.figure(figsize=(7, 5))
     if n_components == 2:
-        scatter = plt.scatter(embeddings_pca[:, 0], embeddings_pca[:, 1], c=labels_np, cmap='viridis', alpha=0.7)
+        scatter = plt.scatter(embeddings_pca[:, 0], embeddings_pca[:, 1], c=labels_np, cmap='Accent', alpha=0.7, s=S)
         plt.xlabel('Principal Component 1')
         plt.ylabel('Principal Component 2')
     elif n_components == 3:
         ax = plt.axes(projection='3d')
-        scatter = ax.scatter(embeddings_pca[:, 0], embeddings_pca[:, 1], embeddings_pca[:, 2], c=labels_np, cmap='viridis', alpha=0.7)
+        scatter = ax.scatter(embeddings_pca[:, 0], embeddings_pca[:, 1], embeddings_pca[:, 2], c=labels_np, cmap='Accent', alpha=0.7, s=S)
         ax.set_xlabel('Principal Component 1')
         ax.set_ylabel('Principal Component 2')
         ax.set_zlabel('Principal Component 3')
@@ -94,12 +97,12 @@ def visualize_embeddings_tsne(embeddings, labels, class_names, n_components=2, s
     # Plotting t-SNE
     plt.figure(figsize=(7, 5))
     if n_components == 2:
-        scatter = plt.scatter(embeddings_tsne[:, 0], embeddings_tsne[:, 1], c=labels_np, cmap='viridis', alpha=0.7)
+        scatter = plt.scatter(embeddings_tsne[:, 0], embeddings_tsne[:, 1], c=labels_np, cmap='Accent', alpha=0.7, s=S)
         plt.xlabel('t-SNE Component 1')
         plt.ylabel('t-SNE Component 2')
     elif n_components == 3:
         ax = plt.axes(projection='3d')
-        scatter = ax.scatter(embeddings_tsne[:, 0], embeddings_tsne[:, 1], embeddings_tsne[:, 2], c=labels_np, cmap='viridis', alpha=0.7)
+        scatter = ax.scatter(embeddings_tsne[:, 0], embeddings_tsne[:, 1], embeddings_tsne[:, 2], c=labels_np, cmap='Accent', alpha=0.7, s=S)
         ax.set_xlabel('t-SNE Component 1')
         ax.set_ylabel('t-SNE Component 2')
         ax.set_zlabel('t-SNE Component 3')
@@ -140,12 +143,12 @@ def visualize_embeddings_umap(embeddings, labels, class_names, n_components=2, s
     # Plotting UMAP
     plt.figure(figsize=(7, 5))
     if n_components == 2:
-        scatter = plt.scatter(embeddings_umap[:, 0], embeddings_umap[:, 1], c=labels_np, cmap='viridis', alpha=0.7)
+        scatter = plt.scatter(embeddings_umap[:, 0], embeddings_umap[:, 1], c=labels_np, cmap='Accent', alpha=0.7, s=S)
         plt.xlabel('UMAP Component 1')
         plt.ylabel('UMAP Component 2')
     elif n_components == 3:
         ax = plt.axes(projection='3d')
-        scatter = ax.scatter(embeddings_umap[:, 0], embeddings_umap[:, 1], embeddings_umap[:, 2], c=labels_np, cmap='viridis', alpha=0.7)
+        scatter = ax.scatter(embeddings_umap[:, 0], embeddings_umap[:, 1], embeddings_umap[:, 2], c=labels_np, cmap='Accent', alpha=0.7, s=S)
         ax.set_xlabel('UMAP Component 1')
         ax.set_ylabel('UMAP Component 2')
         ax.set_zlabel('UMAP Component 3')
@@ -155,7 +158,8 @@ def visualize_embeddings_umap(embeddings, labels, class_names, n_components=2, s
     plt.legend(handles, class_names, title="Classes")
     plt.savefig(str(n_components)+'-dim-'+save_path)
     plt.close()
-    
+
+'''
 '''
     
 def visualize_embeddings_pca(embeddings, labels, class_names, n_components=2, save_path='pca_plot.png'):
@@ -186,7 +190,7 @@ def visualize_embeddings_pca(embeddings, labels, class_names, n_components=2, sa
 
     # Plotting PCA
     plt.figure(figsize=(7, 5))
-    scatter = plt.scatter(embeddings_pca[:, 0], embeddings_pca[:, 1], c=labels_np, cmap='viridis', alpha=0.7)
+    scatter = plt.scatter(embeddings_pca[:, 0], embeddings_pca[:, 1], c=labels_np, cmap='Accent', alpha=0.7)
     plt.title('PCA of Embeddings')
     plt.xlabel('Principal Component 1')
     plt.ylabel('Principal Component 2')
@@ -225,7 +229,7 @@ def visualize_embeddings_tsne(embeddings, labels, class_names, n_components=2, s
 
     # Plotting t-SNE
     plt.figure(figsize=(7, 5))
-    scatter = plt.scatter(embeddings_tsne[:, 0], embeddings_tsne[:, 1], c=labels_np, cmap='viridis', alpha=0.7)
+    scatter = plt.scatter(embeddings_tsne[:, 0], embeddings_tsne[:, 1], c=labels_np, cmap='Accent', alpha=0.7)
     plt.title('t-SNE of Embeddings')
     plt.xlabel('t-SNE Component 1')
     plt.ylabel('t-SNE Component 2')
@@ -264,7 +268,7 @@ def visualize_embeddings_umap(embeddings, labels, class_names, n_components=2, s
 
     # Plotting UMAP
     plt.figure(figsize=(7, 5))
-    scatter = plt.scatter(embeddings_umap[:, 0], embeddings_umap[:, 1], c=labels_np, cmap='viridis', alpha=0.7)
+    scatter = plt.scatter(embeddings_umap[:, 0], embeddings_umap[:, 1], c=labels_np, cmap='Accent', alpha=0.7)
     plt.title('UMAP of Embeddings')
     plt.xlabel('UMAP Component 1')
     plt.ylabel('UMAP Component 2')
@@ -275,6 +279,67 @@ def visualize_embeddings_umap(embeddings, labels, class_names, n_components=2, s
     plt.close()
 '''
 
+def visualize_embeddings_combined(embeddings, labels, class_names, n_components=2, save_path='combined_plot.png'):
+    """
+    Visualize the latent embeddings using PCA, t-SNE, and UMAP side by side in a row of subplots.
+    Handles both 2D and 3D visualizations.
+    """
+
+    # Create a figure and a list of subplots
+    fig = plt.figure(figsize=(21, 8))
+    
+    # PCA
+    ax1 = fig.add_subplot(1, 3, 1, projection='3d' if n_components == 3 else None)
+    pca = PCA(n_components=n_components)
+    embeddings_pca = pca.fit_transform(embeddings)
+    if n_components == 3:
+        scatter = ax1.scatter(embeddings_pca[:, 0], embeddings_pca[:, 1], embeddings_pca[:, 2], c=labels, cmap='Accent', alpha=0.7)
+    else:
+        scatter = ax1.scatter(embeddings_pca[:, 0], embeddings_pca[:, 1], c=labels, cmap='Accent', alpha=0.7)
+    ax1.set_title('PCA')
+    ax1.set_xlabel('Component 1')
+    ax1.set_ylabel('Component 2')
+    if n_components == 3:
+        ax1.set_zlabel('Component 3')
+    
+    # t-SNE
+    ax2 = fig.add_subplot(1, 3, 2, projection='3d' if n_components == 3 else None)
+    tsne = TSNE(n_components=n_components, random_state=42)
+    embeddings_tsne = tsne.fit_transform(embeddings)
+    if n_components == 3:
+        scatter = ax2.scatter(embeddings_tsne[:, 0], embeddings_tsne[:, 1], embeddings_tsne[:, 2], c=labels, cmap='Accent', alpha=0.7)
+    else:
+        scatter = ax2.scatter(embeddings_tsne[:, 0], embeddings_tsne[:, 1], c=labels, cmap='Accent', alpha=0.7)
+    ax2.set_title('t-SNE')
+    ax2.set_xlabel('Component 1')
+    ax2.set_ylabel('Component 2')
+    if n_components == 3:
+        ax2.set_zlabel('Component 3')
+    
+    # UMAP
+    ax3 = fig.add_subplot(1, 3, 3, projection='3d' if n_components == 3 else None)
+    reducer = umap.UMAP(n_components=n_components, random_state=42)
+    embeddings_umap = reducer.fit_transform(embeddings)
+    if n_components == 3:
+        scatter = ax3.scatter(embeddings_umap[:, 0], embeddings_umap[:, 1], embeddings_umap[:, 2], c=labels, cmap='Accent', alpha=0.7)
+    else:
+        scatter = ax3.scatter(embeddings_umap[:, 0], embeddings_umap[:, 1], c=labels, cmap='Accent', alpha=0.7)
+    ax3.set_title('UMAP')
+    ax3.set_xlabel('Component 1')
+    ax3.set_ylabel('Component 2')
+    if n_components == 3:
+        ax3.set_zlabel('Component 3')
+
+    handles = [mlines.Line2D([], [], color='Accent' if len(class_names) < i else plt.get_cmap('Accent')(i/len(class_names)), marker='o', linestyle='', label=class_names[i]) for i in range(len(class_names))]
+    
+    # Placing the legend below the subplots
+    fig.legend(handles=handles, loc='lower center', bbox_to_anchor=(0.5, 0.05), fontsize='small', title="Classes", ncol=len(class_names))
+    
+    # Adjust layout to make room for legend below the plots
+    # plt.tight_layout(rect=[0, 0, 1, 0.95])  # Adjust the rect: the top space is reduced to make more room at the bottom
+    plt.subplots_adjust(bottom=0.15)  # Adjust bottom to provide space for legend
+    plt.savefig(save_path)
+    plt.close()
 
 torch_rng = torch.Generator().manual_seed(42)
 torch.set_float32_matmul_precision('high')
@@ -352,7 +417,7 @@ if __name__ == '__main__':
     # Now the embeddings are saved
     
     tensors = torch.load('/home/xinyu.li/my_emb_lab.pth')
-    emb, label = tensors['emb'], tensors['label']
+    emb, label = tensors['emb'].cpu(), tensors['label'].cpu()
     
     print(emb.shape, label.shape)
     
@@ -364,11 +429,13 @@ if __name__ == '__main__':
     embeddings = torch.randn(seq_len, d_embedding)
     labels = torch.randint(0, class_cnt, (seq_len,))  # Random integer labels"""
 
-    # Visualize using PCA
+    visualize_embeddings_combined(emb, label, class_names=ALL_GENRES, n_components=args.n_comp, save_path=f'{args.n_comp}-dim-{args.set}-set.png')
+    
+    '''# Visualize using PCA
     visualize_embeddings_pca(emb, label, class_names=ALL_GENRES, n_components=args.n_comp)
     
     # Visualize using t-SNE
     visualize_embeddings_tsne(emb, label, class_names=ALL_GENRES, n_components=args.n_comp)
     
     # Visualize using UMAP
-    visualize_embeddings_umap(emb, label, class_names=ALL_GENRES, n_components=args.n_comp)
+    visualize_embeddings_umap(emb, label, class_names=ALL_GENRES, n_components=args.n_comp)'''
