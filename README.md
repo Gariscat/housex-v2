@@ -1,5 +1,7 @@
-# 🔥 Mainstage EDM Sub-Genre Benchmark 🔥
+# 🔥 Mainstage Sub-Genre Benchmark 🔥
 An extended classification benchmark for mainstream dance music in the style of house, covering progressive house, future house, bass house, tech house, deep house, bigroom, future rave and slap house.
+
+The paper is on [arXiv](https://arxiv.org/abs/2409.06690).
 
 ## Collection
 
@@ -25,7 +27,7 @@ Run ```python train.py```. Again, use the above mentioned 2 parameters to specif
 
 ## Deployment
 
-The demo of stage visuals controlled by our classification model is under construction. Coming soon in a week or two :)
+The demo of stage visuals controlled by our classification model is [here](https://drive.google.com/drive/folders/1NJOy-fh-ozCiSy-olYjuxENNqti65o5T).
 
 ## Checking existing annotations
 We also prepared a simple UI to check existing annotations (.csv). Run ```utils.py``` to view annotations of audio files in a folder. Before you run, please make sure you have modified ```anno_path``` and ```audio_dir``` in the .py file to your corresponding paths.
