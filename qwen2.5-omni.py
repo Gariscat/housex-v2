@@ -126,7 +126,7 @@ if __name__ == "__main__":
     print("Accuracy:", accurate_cnt / len(clip_info_list))
     print("Intersect-rate:", intersect_cnt / len(clip_info_list))
     
-    with open(os.path.join(clip_info_dir, 'qwen_audio_result.txt'), 'w') as f:
+    with open(os.path.join(clip_info_dir, 'qwen2.5_omni_result.txt'), 'w') as f:
         f.write(f"Accuracy: {accuracy}\nIntersect-rate: {intersect_rate}")
     
     print(compute_metrics(np.array(all_preds), np.array(all_labels)))
