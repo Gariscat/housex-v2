@@ -1,3 +1,8 @@
+"""
+Please use the stable version of transformers.
+"""
+
+
 from transformers import Qwen2AudioForConditionalGeneration, AutoProcessor
 from transformers.generation import GenerationConfig
 import torch
@@ -9,6 +14,9 @@ import re
 import random
 import librosa
 
+# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+
+USE_REFERENCE = True
 torch.manual_seed(42)
 
 # Note: The default behavior now has injection attack prevention off.
@@ -27,7 +35,9 @@ if __name__ == "__main__":
     with open('./misc/v2-doc.txt', 'r') as f:
         reference = ''.join(f.readlines())
     ### print(reference)
-    
+    background = f"From the perspective of an EDM producer, \
+                we have some background knowledge for house music classification as references. \
+                {reference} " if USE_REFERENCE else ""
     clip_info_dir = '/home/xinyu.li/autodl-tmp/standalone_test/'
     with open(os.path.join(clip_info_dir, 'clip_info.json'), 'r') as f:
         clip_info_list = json.load(f)
@@ -42,15 +52,14 @@ if __name__ == "__main__":
     for clip_info in tqdm(clip_info_list):
         track_name = os.path.basename(clip_info["track_path"])
         track_abs_path = os.path.join(clip_info_dir, track_name)
+        
         conversation = [
             {'role': 'system', 'content': 'You are a helpful assistant.'}, 
             {"role": "user", "content": [
                 {"type": "audio", "audio_url": track_abs_path},
-                {"type": "text", "text": f'From the perspective of an EDM producer, \
-                we have some background knowledge for house music classification as references. \
-                {reference} \
+                {"type": "text", "text": f'{background} \
                 What is the genre of this song? Answer to the best of your knowledge. \
-                Please only output the number of the genre in the following list:\n\
+                Please first describe the music, do some analysis. Finally, output the number of the genre in the following list:\n\
                 1. progressive house\n\
                 2. future house/future bounce\n\
                 3. bass house\n\
@@ -58,8 +67,7 @@ if __name__ == "__main__":
                 5. bigroom\n\
                 6. deep house\n\
                 7. future rave\n\
-                8. slap house/Brazilian bass\n. \
-                Do not include any other information in your answer.'},
+                8. slap house/Brazilian bass'},
             ]},
         ]
         text = processor.apply_chat_template(conversation, add_generation_prompt=True, tokenize=False)

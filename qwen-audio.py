@@ -1,3 +1,7 @@
+"""
+Please use the stable version of transformers.
+"""
+
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers.generation import GenerationConfig
 import torch
