@@ -32,7 +32,8 @@ The demo of stage visuals controlled by our classification model is [here](https
 ## Checking existing annotations
 We also prepared a simple UI to check existing annotations (.csv). Run ```utils.py``` to view annotations of audio files in a folder. Before you run, please make sure you have modified ```anno_path``` and ```audio_dir``` in the .py file to your corresponding paths.
 
-P.S. We are committed to ethical and legal research practices and have carefully considered copyright implications in our non-commercial, academic work aimed at advancing music information retrieval (MIR) for EDM. Below, we address these concerns and clarify our approach:
+## Copyright
+We are committed to ethical and legal research practices and have carefully considered copyright implications in our non-commercial, academic work aimed at advancing music information retrieval (MIR) for EDM. Below, we address these concerns and clarify our approach:
 
 1. **Justification for Commercial Releases**: To ensure high audio quality and representativeness of contemporary EDM, we used commercial releases, as these reflect the production standards and diversity of the genre’s biggest hits. This choice strengthens the validity and generalizability of our findings, which aim to benefit the MIR community and, indirectly, the music industry through improved music analysis tools.
 
