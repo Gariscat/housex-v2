@@ -31,3 +31,15 @@ The demo of stage visuals controlled by our classification model is [here](https
 
 ## Checking existing annotations
 We also prepared a simple UI to check existing annotations (.csv). Run ```utils.py``` to view annotations of audio files in a folder. Before you run, please make sure you have modified ```anno_path``` and ```audio_dir``` in the .py file to your corresponding paths.
+
+P.S. We are committed to ethical and legal research practices and have carefully considered copyright implications in our non-commercial, academic work aimed at advancing music information retrieval (MIR) for EDM. Below, we address these concerns and clarify our approach:
+
+1. **Justification for Commercial Releases**: To ensure high audio quality and representativeness of contemporary EDM, we used commercial releases, as these reflect the production standards and diversity of the genre’s biggest hits. This choice strengthens the validity and generalizability of our findings, which aim to benefit the MIR community and, indirectly, the music industry through improved music analysis tools.
+
+2. **Non-Commercial Academic Research**: Our study is purely academic, with no commercial intent or application. The dataset and model are developed solely to advance MIR techniques for EDM sub-genre classification, contributing to the broader scientific community’s understanding of music structure and style.
+
+3. **Transformative Use of Limited Excerpts**: We extracted only the “drop” sections of the songs, which are short, distinct segments (typically 15–30 seconds). This use is transformative, as the drops are processed for feature extraction and classification, not for reproduction or consumption as music. The dataset does not enable reconstruction of the original songs, ensuring no substitution for the artists’ or labels’ original market.
+
+4. **No Market Harm**: Our work, even if the dataset is made public, poses no threat to the commercial market of the original artists or record labels. The dataset consists of processed audio features and short excerpts, not full tracks, and is intended for research purposes only. To the best of our knowledge, they could not be used to replicate or compete with the original songs,
+
+We are faithfully grateful to all the artists who produced these amazing tracks. Still, if you have copyright issues, please contact xl3133@nyu.edu.
