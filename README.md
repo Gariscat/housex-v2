@@ -11,7 +11,13 @@ P.S. The ```annotations``` folder is deprecated. We keep annotations together wi
 
 ## Annotation
 
-Annotation is done using ```Label-Studio``` (MANY thanks to the developers!). We use soft labeling such that the probabilities of each sub-genre should sum up to 1.
+Annotation is done using ```Label-Studio``` (MANY thanks to the developers!). We use soft labeling such that the probabilities of each sub-genre should sum up to 1. We also prepared a simple UI to check existing annotations (.csv). Run ```utils.py``` to view annotations of audio files in a folder. Before you run, please make sure you have modified ```anno_path``` and ```audio_dir``` in the .py file to your corresponding paths.
+
+## Get Started
+
+We recommend creating a conda environment. After activation, run ```pip install -r requirements.txt``` to install all the packages needed.
+
+*Note that these dependencies only support our model. For MU-LLaMA, MusiLingo and the Qwen series, please refer to their demo pages for installation. Put ```mu-llama.py``` and ```musilingo.py``` to their root directories to do inference.*
 
 ## Drop Detection
 
@@ -23,14 +29,11 @@ Again, modify the directories in the ```main``` function of ```dataset.py``` to 
 
 ## Training
 
-Run ```python train.py```. Again, use the above mentioned 2 parameters to specify the dataset. Also, you can control other parameters like the network architecture and which GPU to use (Please refer to ```train.py``` for details). After training, you can run ```python vis_emb.py --force_run``` to visualize the embeddings with dimension reduction techniques like PCA, t-SNE and UMAP. Make sure that the checkpoint you load is trained from the dataset that matches the parameters in ```vis_emb.py```. Checkpoints trained on dataset without chromagrams would give random scatter points on dataset with chromagrams :|
+Run ```python train.py```. Again, use the above mentioned 2 parameters to specify the dataset. Also, you can control other parameters like the network architecture and which GPU to use (Please refer to ```train.py``` for details). After training, you can run ```python vis_emb.py --force_run``` to visualize the embeddings with dimension reduction techniques like PCA, t-SNE and UMAP. Make sure that the checkpoint you load is trained from the dataset type that matches the arguments in ```vis_emb.py``` to avoid unexpected results. Checkpoints trained on dataset without chromagrams could produce random scatter points on dataset with chromagrams :|
 
 ## Deployment
 
 The demo of stage visuals controlled by our classification model is [here](https://drive.google.com/drive/folders/1NJOy-fh-ozCiSy-olYjuxENNqti65o5T).
-
-## Checking existing annotations
-We also prepared a simple UI to check existing annotations (.csv). Run ```utils.py``` to view annotations of audio files in a folder. Before you run, please make sure you have modified ```anno_path``` and ```audio_dir``` in the .py file to your corresponding paths.
 
 ## Copyright
 We are committed to ethical and legal research practices and have carefully considered copyright implications in our non-commercial, academic work aimed at advancing music information retrieval (MIR) for EDM. Below, we address these concerns and clarify our approach:
