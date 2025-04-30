@@ -104,7 +104,7 @@ class MainstageModel(L.LightningModule):
         for i_frame in range(0, w-N_MELS, HOP_FRAME):
             cur_patch = x[:, :, :, i_frame:i_frame+N_MELS]
             if cur_patch.shape[-1] != N_MELS:
-                zero_paddings = torch.zeros(b, c, h, cur_patch.shape[-1]-N_MELS)
+                zero_paddings = torch.zeros(b, c, h, N_MELS-cur_patch.shape[-1]).to(cur_patch.device)
                 cur_patch = torch.cat((cur_patch, zero_paddings), dim=-1)
             y = self.extractor(cur_patch)
             features.append(y)
