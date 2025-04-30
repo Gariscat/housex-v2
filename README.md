@@ -19,11 +19,11 @@ We recommend creating a conda environment. After activation, run ```pip install 
 
 *Note that these dependencies only support our model. For MU-LLaMA, MusiLingo, the Qwen series and Kimi-Audio, please refer to their demo pages for installation. Put ```mu-llama.py```, ```musilingo.py``` and ```kimi-audio.py``` to their root directories to do inferences since these models are not native in HuggingFace so far.*
 
-## Drop Detection
+## Loudness-Based Drop Detection
 
 Modify the directories in ```detect.py``` to the 3 folders of our data (or your own data with the same structure), Run ```python detect.py``` to detect the drops of tracks using rule-based algorithm by volume thresholds. The detected drops are stored as ```.json``` files in the folders respectively.
 
-## Loudness-Based Dataset Generation
+## Dataset Generation
 
 Again, modify the directories in the ```main``` function of ```dataset.py``` to the corresponding folders. Then, run ```python dataset.py``` to generate the training set and the validation set (which is also the test set in our context). You can specify the ```--use_chroma``` and ```--mode``` parameter to determine whether to include chromagrams in the data representation and which type of label (soft/hard) to use.
 
