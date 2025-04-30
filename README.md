@@ -23,7 +23,7 @@ We recommend creating a conda environment. After activation, run ```pip install 
 
 Modify the directories in ```detect.py``` to the 3 folders of our data (or your own data with the same structure), Run ```python detect.py``` to detect the drops of tracks using rule-based algorithm by volume thresholds. The detected drops are stored as ```.json``` files in the folders respectively.
 
-## Dataset Generation
+## Loudness-Based Dataset Generation
 
 Again, modify the directories in the ```main``` function of ```dataset.py``` to the corresponding folders. Then, run ```python dataset.py``` to generate the training set and the validation set (which is also the test set in our context). You can specify the ```--use_chroma``` and ```--mode``` parameter to determine whether to include chromagrams in the data representation and which type of label (soft/hard) to use.
 
