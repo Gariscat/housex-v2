@@ -17,7 +17,7 @@ Annotation is done using ```Label-Studio``` (MANY thanks to the developers!). We
 
 We recommend creating a conda environment. After activation, run ```pip install -r requirements.txt``` to install all the packages needed.
 
-*Note that these dependencies only support our model. For MU-LLaMA, MusiLingo and the Qwen series, please refer to their demo pages for installation. Put ```mu-llama.py```, ```musilingo.py``` and ```kimi-audio.py``` to their root directories to do inferences since these models are not native in HuggingFace so far.*
+*Note that these dependencies only support our model. For MU-LLaMA, MusiLingo, the Qwen series and Kimi-Audio, please refer to their demo pages for installation. Put ```mu-llama.py```, ```musilingo.py``` and ```kimi-audio.py``` to their root directories to do inferences since these models are not native in HuggingFace so far.*
 
 ## Drop Detection
 
