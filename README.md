@@ -6,7 +6,7 @@ An extended classification benchmark with soft-labeling for mainstream dance mus
 ## Definition
 
 1. **Progressive House**: Characterized by its highly melodic structure and regular groove, this genre typically features a main sound composed of supersaw synths, piano, and strings. [An example](https://youtu.be/Lpjcm1F8tY8?feature=shared&t=90).
-2. **Future House**: Defined by its irregular groove and a less pronounced melody compared to Progressive House, this genre is distinguished by an overall tech-driven, futuristic sound. [An example](https://youtu.be/G4v_EPDxTcA?feature=shared&t=24).
+2. **Future House**: Defined by its fragmented rhythm and a less pronounced melody compared to Progressive House, this genre is distinguished by an overall tech-driven, futuristic sound. [An example](https://youtu.be/G4v_EPDxTcA?feature=shared&t=24).
 3. **Bass House**: Characterized by the absence of a prominent lead instrument or the presence of a non-melodic lead, this genre features minimal chord progression, heavily distorted sounds, and a noisy texture, making it well-suited for outdoor music festivals. It often carries a dark, intense vibe. [An example](https://youtu.be/mTmet4jAkEA?si=CZofnG6wr5uq3iyA&t=24).
 4. **Tech House**: Similar to Bass House but with a less noisy sound profile, this genre is more suitable for dance halls and bars, where the atmosphere is energetic but not as intense. [An example](https://youtu.be/nSG21KhzexU?si=mQqahlR_4UBQHCLy&t=21).
 5. **Deep House**: Quieter than Tech House, this genre is characterized by a smooth groove, a strong atmospheric presence with large reverb, and a generally slower rhythm. [An example](https://youtu.be/2YA3yE3eO1w?feature=shared&t=53).
