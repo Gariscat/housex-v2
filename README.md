@@ -18,7 +18,7 @@ Why soft labels? See an [example](https://www.youtube.com/watch?v=pISSIJCY_io) s
 
 ## Collection
 
-Our dataset contains 1035 tracks. You can download it from [Google Drive](https://drive.google.com/drive/folders/12VNfriD5d6aUGN5w-LVKxT0Gsqe7RpEL?usp=sharing). We split them into 3 parts due to the file upload limit in ```Label-Studio``` and that the data is labeled by multiple experts. These 3 parts are **not** 3 folds of the dataset in the sense of train/val/test. The splits are created after loading all the tracks from the folders.
+Our dataset contains 1035 tracks. You can download it from [Google Drive](https://drive.google.com/drive/folders/12VNfriD5d6aUGN5w-LVKxT0Gsqe7RpEL?usp=sharing) (if the link expires, please contact xl3133@nyu.edu). We split them into 3 parts due to the file upload limit in ```Label-Studio``` and that the data is labeled by multiple experts. These 3 parts are **not** 3 folds of the dataset in the sense of train/val/test. The splits are created after loading all the tracks from the folders.
 
 P.S. The ```annotations``` folder is deprecated. We keep annotations together with audio files in standlone directories.
 
