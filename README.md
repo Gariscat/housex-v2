@@ -1,5 +1,5 @@
 # 🔥 Mainstage Sub-Genre Benchmark 🔥
-An extended classification benchmark for mainstream dance music in the style of house, covering progressive house, future house, bass house, tech house, deep house, bigroom, future rave and slap house.
+An extended classification benchmark with soft-labeling for mainstream dance music in the style of house, covering progressive house, future house, bass house, tech house, deep house, bigroom, future rave and slap house.
 
 <!--The paper is on [arXiv](https://arxiv.org/abs/2409.06690).-->
 
@@ -13,6 +13,8 @@ An extended classification benchmark for mainstream dance music in the style of 
 6. **Bigroom**: Often referred to as "Festival EDM," this genre exhibits simple, sometimes trivial musical structure, characterized by its raw, energetic, and hyped atmosphere. [An example](https://youtu.be/9vMh9f41pqE?feature=shared&t=46).
 7. **Future Rave**: Marked by a relatively regular groove, this genre features a bass with moderate attack and a wave-like texture. The main sounds often exhibit quite electronic timbres. [An example](https://youtu.be/gvJQSAvA2yQ?feature=shared&t=67).
 8. **Slap House**: A popular choice for BGM in short videos, this genre typically includes vocals and features a bouncy bass. It often lacks chordal instruments, with the bass providing some mid and high frequencies. [An example](https://youtu.be/P0t8c9YwSM4?feature=shared&t=32).
+
+Why soft labels? See an [example](https://www.youtube.com/watch?v=pISSIJCY_io) showing both progressive house and future house vibes. This multi-genre characteristic is in fact ubiquitous among EDM songs.
 
 ## Collection
 
