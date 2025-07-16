@@ -3,6 +3,17 @@ An extended classification benchmark for mainstream dance music in the style of 
 
 <!--The paper is on [arXiv](https://arxiv.org/abs/2409.06690).-->
 
+## Definition
+
+1. **Progressive House**: Characterized by its highly melodic structure and regular groove, this genre typically features a main sound composed of supersaw synths, piano, and strings. [An example](https://youtu.be/Lpjcm1F8tY8?feature=shared&t=90).
+2. **Future House**: Defined by its irregular groove and a less pronounced melody compared to Progressive House, this genre is distinguished by an overall tech-driven, futuristic sound. [An example](https://youtu.be/G4v_EPDxTcA?feature=shared&t=24).
+3. **Bass House**: Characterized by the absence of a prominent lead instrument or the presence of a non-melodic lead, this genre features minimal chord progression, heavily distorted sounds, and a noisy texture, making it well-suited for outdoor music festivals. It often carries a dark, intense vibe. [An example](https://youtu.be/mTmet4jAkEA?si=CZofnG6wr5uq3iyA&t=24).
+4. **Tech House**: Similar to Bass House but with a less noisy sound profile, this genre is more suitable for dance halls and bars, where the atmosphere is energetic but not as intense. [An example](https://youtu.be/nSG21KhzexU?si=mQqahlR_4UBQHCLy&t=21).
+5. **Deep House**: Quieter than Tech House, this genre is characterized by a smooth groove, a strong atmospheric presence with large reverb, and a generally slower rhythm. [An example](https://youtu.be/2YA3yE3eO1w?feature=shared&t=53).
+6. **Bigroom**: Often referred to as "Festival EDM," this genre exhibits simple, sometimes trivial musical structure, characterized by its raw, energetic, and hyped atmosphere. [An example](https://youtu.be/9vMh9f41pqE?feature=shared&t=46).
+7. **Future Rave**: Marked by a relatively regular groove, this genre features a bass with moderate attack and a wave-like texture. The main sounds often exhibit quite electronic timbres. [An example](https://youtu.be/gvJQSAvA2yQ?feature=shared&t=67).
+8. **Slap House**: A popular choice for BGM in short videos, this genre typically includes vocals and features a bouncy bass. It often lacks chordal instruments, with the bass providing some mid and high frequencies. [An example](https://youtu.be/P0t8c9YwSM4?feature=shared&t=32).
+
 ## Collection
 
 Our dataset contains 1035 tracks. You can download it from [Google Drive](https://drive.google.com/drive/folders/12VNfriD5d6aUGN5w-LVKxT0Gsqe7RpEL?usp=sharing). We split them into 3 parts due to the file upload limit in ```Label-Studio``` and that the data is labeled by multiple experts. These 3 parts are **not** 3 folds of the dataset in the sense of train/val/test. The splits are created after loading all the tracks from the folders.
