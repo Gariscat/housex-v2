@@ -1,5 +1,5 @@
 # 🔥 Mainstage Sub-Genre Benchmark 🔥
-An extended classification benchmark with soft-labeling for mainstream dance music in the style of house, covering progressive house, future house, bass house, tech house, deep house, bigroom, future rave and slap house.
+This is the official repository of the paper [Benchmarking Sub-Genre Classification For Mainstage Dance Music](https://arxiv.org/abs/2409.06690), providing an extended classification benchmark with soft-labeling for mainstream dance music in the style of house, covering progressive house, future house, bass house, tech house, deep house, bigroom, future rave and slap house.
 
 <!--The paper is on [arXiv](https://arxiv.org/abs/2409.06690).-->
 
@@ -60,3 +60,4 @@ We are committed to ethical and legal research practices and have carefully cons
 4. **No Market Harm**: Our work, even if the dataset is made public, poses no threat to the commercial market of the original artists or record labels. The dataset consists of processed audio features and short excerpts, not full tracks, and is intended for research purposes only. To the best of our knowledge, they could not be used to replicate or compete with the original songs,
 
 We are faithfully grateful to all the artists who produced these amazing tracks. Still, if you have copyright issues, please contact xl3133@nyu.edu.
+
