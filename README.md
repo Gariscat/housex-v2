@@ -1,6 +1,6 @@
 # 🔥 Mainstage Sub-Genre Benchmark 🔥
 [![arXiv](https://img.shields.io/badge/arXiv-2409.06690-b31b1b.svg)](https://arxiv.org/abs/2409.06690)
-[![Hugging Face](https://img.shields.io/badge/Dataset-Hugging_Face-FFD21E?logo=huggingface&logoColor=black)](https://huggingface.co/Gariscat/HouseX)
+[![Hugging Face](https://img.shields.io/badge/Dataset-Hugging_Face-FFD21E?logo=huggingface&logoColor=black)](https://huggingface.co/datasets/Gariscat/HouseX)
 
 This is the official repository of the paper [Benchmarking Sub-Genre Classification For Mainstage Dance Music](https://arxiv.org/abs/2409.06690), providing an extended classification benchmark with soft-labeling for mainstream dance music in the style of house, covering progressive house, future house, bass house, tech house, deep house, bigroom, future rave and slap house.
 
